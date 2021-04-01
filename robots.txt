@@ -1,0 +1,7 @@
+User-Agent: *
+Disallow: */index.php$
+Disallow: /bitrix/
+Disallow: /personal/
+Disallow: */cgi-bin/
+Disallow: /local/
+Sitemap: https://liga-alf.ru/sitemap.xml

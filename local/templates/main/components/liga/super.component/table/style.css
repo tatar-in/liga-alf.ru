@@ -1,0 +1,109 @@
+.cup {
+	display: block;
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+.stage {
+	display: flex;
+	padding: 0 5px;
+	/*border-bottom: 1px solid #dee2e6 ;*/
+}
+.levels {
+	display: block;
+	text-align: center;
+	padding: 0 5px;
+	position: relative;
+	min-width: 202px;
+	max-width: 228px;
+	border-bottom: 4px solid #dee2e6;
+}	
+.table-cup{
+	display: flex;
+}
+.column {
+	display: block;
+	padding: 0 5px;
+	position: relative;
+	max-width: 228px;
+}
+.column:first-child{
+	padding-top:0;
+}
+.column:nth-child(2){
+	padding-top: 41px;
+}
+.column:nth-child(3){
+	padding-top: 128px;
+}
+.column:nth-child(4){
+	padding-top: 302px;
+}
+.column:nth-child(5){
+	padding-top: 645px;
+}
+.match{
+    height: 72px;
+	background: #fff;
+	display: block;
+	/*height: 52px;*/
+	min-width: 202px;
+	position: relative;
+	border: 2px solid #dee2e6/*#d7d8dc*/ ;
+}
+.match:nth-child(2n) {
+	margin-top: 10px;
+}
+.match:nth-child(2n+3) {
+	margin-top: 20px;
+}
+.column:nth-child(2) .match:first-child{
+	margin-top: 0;
+}
+.column:nth-child(2) .match{
+	margin-top: 102px;
+}
+.column:nth-child(3) .match:first-child{
+	margin-top: 0;
+}
+.column:nth-child(3) .match{
+	margin-top: 276px;
+}
+.column:nth-child(4) .match:first-child{
+	margin-top: 0;
+}
+.column:nth-child(4) .match{
+	margin-top: 624px;
+}
+.column:nth-child(5) .match:first-child{
+	margin-top: 0;
+}
+.column:nth-child(5) .match{
+	margin-top: 1320px;
+}
+.team {
+	height: 36px;
+	display: flex;
+}
+.name {
+	/*line-height: 36px;*/
+	/*height: 100%;*/
+	min-width: 0;
+	flex: 1 1 0;
+	overflow: hidden;
+	padding-right: 3px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.name img {
+	line-height: 20px;
+}
+.score {
+	/*line-height: 36px;*/
+	/*height: 100%;*/
+	flex-basis: 50px;
+	margin: 0;
+	text-align: center;
+	white-space: nowrap;
+}

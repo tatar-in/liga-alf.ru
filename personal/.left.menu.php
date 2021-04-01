@@ -1,0 +1,53 @@
+<?
+$aMenuLinks = Array(
+	Array(
+		"Турниры", 
+		"/personal/tournament/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,7))" 
+	),
+	Array(
+		"Игроки", 
+		"/personal/player/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,5))" 
+	),
+	Array(
+		"Команды", 
+		"/personal/team/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,6))" 
+	),
+	Array(
+		"Новости", 
+		"/personal/news/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,8))" 
+	),
+	Array(
+		"Слайдер", 
+		"/personal/slider/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,9))" 
+	),
+	Array(
+		"Награды", 
+		"/personal/trophy/", 
+		Array(), 
+		Array(), 
+		"CSite::InGroup(array(1,10))" 
+	),
+	Array(
+		"Выход", 
+		"?logout=yes", 
+		Array(), 
+		Array(), 
+		"" 
+	)
+);
+?>

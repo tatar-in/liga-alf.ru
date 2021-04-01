@@ -1,0 +1,6 @@
+.two-columns li {
+    display: block;
+    width: 49%;
+    min-width: 250px;
+    float: left;
+}

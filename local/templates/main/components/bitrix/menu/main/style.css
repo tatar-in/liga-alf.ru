@@ -1,0 +1,13 @@
+.my-dropdown-menu{
+	border-color: rgba(255,255,255,.1);
+	background-color: #343a40 !important;
+}
+
+.my-dropdown-item{
+	color: #fff !important;
+}
+
+.my-dropdown-item:focus,
+.my-dropdown-item:hover {
+	background-color:#23272b
+}
