@@ -68,6 +68,24 @@ $this->setFrameMode(true);
 	),
 	$component
 );?>
+
+<?// вызов компонента расчета 
+if (dirname($_SERVER["REQUEST_URI"]) == "/player") {
+	$APPLICATION->IncludeComponent("liga:super.component", "player_item", Array(
+			"IBLOCK_ID" => "3", // инфоблок, по которому формировать расчет (инфоблок матчей)
+			"PLAYER" => $arResult["VARIABLES"]["ELEMENT_ID"],
+			"SECTION_ID" => $_GET["TOURNAMENT"],
+			"DIR" => dirname($_SERVER["REQUEST_URI"]),
+			"CACHE_TIME" => "3600",	// Время кеширования (сек.)
+			"CACHE_TYPE" => "A",	// Тип кеширования
+		),
+		false
+	);
+}
+elseif (dirname($_SERVER["REQUEST_URI"]) == "/team") {
+	// echo dirname($_SERVER["REQUEST_URI"]);
+}?>
+
 <?/*<p><a href="<?=$arResult["FOLDER"].$arResult["URL_TEMPLATES"]["news"]?>"><?=GetMessage("T_NEWS_DETAIL_BACK")?></a></p>*/?>
 <?if($arParams["USE_RATING"]=="Y" && $ElementID):?>
 <?$APPLICATION->IncludeComponent(

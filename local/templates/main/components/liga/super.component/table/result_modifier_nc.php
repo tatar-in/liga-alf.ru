@@ -4,10 +4,17 @@
 
 
     // Добавляем хлебные крошки
-	foreach ($arResult["PARENTS"] as $value) {
+	foreach ($arResult["PARENTS"] as $value) 
+	{
 		$APPLICATION->AddChainItem($value["NAME"], "/tournament/calendar/?SECTION_ID=".$value["ID"]);
-}
+	}
 
+	// для отладки
+	// if($USER->IsAdmin())
+	// {
+	// 	echo '<pre>'; print_r($arParams); echo '</pre>';
+	// 	echo '<pre>'; print_r($arResult); echo '</pre>';
+	// }
 
 /*
 $APPLICATION->SetTitle($arResult["NAME"]);

@@ -1,11 +1,5 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 
-<?
-// echo '<pre>'; print_r($arResult); echo '</pre>';
-?>
-	
-
-
 
 
 <div class="bg-light shadow px-3 py-3 mb-5">

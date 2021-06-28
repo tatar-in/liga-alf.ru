@@ -38,7 +38,6 @@ $this->setFrameMode(true);
 
 
 
-
 	<?if($arParams["DISPLAY_DATE"]!="N" && $arResult["DISPLAY_ACTIVE_FROM"]):?>
 		<span class="news-date-time"><?=$arResult["DISPLAY_ACTIVE_FROM"]?></span>
 	<?endif;?>

@@ -17,11 +17,11 @@ $this->setFrameMode(true);
 ?>
 
 
+<?if($arParams["DISPLAY_TOP_PAGER"]):?>
+	<?=$arResult["NAV_STRING"]?>
+<?endif;?>
 
 <div class="table-responsive">
-	<?if($arParams["DISPLAY_TOP_PAGER"]):?>
-		<?=$arResult["NAV_STRING"]?>
-	<?endif;?>
 	<table class="table table-hover table-sm ">
 		<thead>
 			<tr>
@@ -140,7 +140,8 @@ $this->setFrameMode(true);
 			<?endforeach;?>
 		</tbody>
 	</table>
-	<?if($arParams["DISPLAY_BOTTOM_PAGER"]):?>
-		<?=$arResult["NAV_STRING"]?>
-	<?endif;?>
 </div>
+
+<?if($arParams["DISPLAY_BOTTOM_PAGER"]):?>
+	<?=$arResult["NAV_STRING"]?>
+<?endif;?>

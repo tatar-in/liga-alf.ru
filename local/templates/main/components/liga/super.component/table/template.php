@@ -1,14 +1,5 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 
-<?
-// if($USER->IsAdmin())
-// {
-// 	echo '<pre>'; print_r($arParams); echo '</pre>';
-// 	echo '<pre>'; print_r($arResult); echo '</pre>';
-// }
-?>
-	
-
 
 <?foreach ($arResult["SECTION"] as $key => $secItem) :?>
 	<?if($secItem["ELEMENT_CNT"]==0 || $secItem["TYPE"] == 0):?>
@@ -63,7 +54,7 @@
 							<?foreach ($arResult["SECTION"][$key]["TEAMS"] as $v) :?>
 								<td class="text-center d-none" data-matches-<?=$key?>="column-hidden" <?if($v["ID"]==$value["ID"]) echo 'style="background-color:#ececec;" ';?> >
 									<?foreach ($arResult["MATCHES"] as $v1){
-										if ((($v1["TEAM_1"]==$value["ID"] && $v1["TEAM_2"]==$v["ID"]) || ($v1["TEAM_2"]==$value["ID"] && $v1["TEAM_1"]==$v["ID"])) && !$v1["GOALS_1"] && !$v1["GOALS_2"]  && in_array($key, $v1["SECTION"])) {?>	<?// добавил in_array($key, $v1["SECTION"]) для исправления бага, который отображал в таблицах результаты матчей из других категорий турнира?>
+										if ((($v1["TEAM_1"]==$value["ID"] && $v1["TEAM_2"]==$v["ID"]) || ($v1["TEAM_2"]==$value["ID"] && $v1["TEAM_1"]==$v["ID"])) && !isset($v1["GOALS_1"]) && !isset($v1["GOALS_2"])  && in_array($key, $v1["SECTION"])) {?>	<?// добавил in_array($key, $v1["SECTION"]) для исправления бага, который отображал в таблицах результаты матчей из других категорий турнира?>
 											<a href="/tournament/calendar<?=$v1["URL"]?>&SECTION_ID=<?=$arParams["SECTION_ID"]?>" class="text-reset">
 												<?echo " -:- ";?>
 											</a>

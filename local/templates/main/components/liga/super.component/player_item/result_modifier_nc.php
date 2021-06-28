@@ -10,7 +10,10 @@
 
 	// для отладки
 	// if($USER -> IsAdmin()){
+	// 	echo '$arResult';
 	// 	echo '<pre>'; print_r($arResult); echo '</pre>';
+	// 	echo '$arParams';
+	// 	echo '<pre>'; print_r($arParams); echo '</pre>';
 	// }
 
 
