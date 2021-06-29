@@ -4,6 +4,12 @@ $APPLICATION->SetTitle("Title");
 
 ?>
 
+<?
+// фильтр по вхождению в название элемента (поиск по названию)
+global $arrFilter;
+$arrFilter = array("?NAME" => $_GET["search"]);
+?>
+
 
 <?$APPLICATION->IncludeComponent(
 	"bitrix:news.list", 
@@ -32,7 +38,7 @@ $APPLICATION->SetTitle("Title");
 			0 => "",
 			1 => "",
 		),
-		"FILTER_NAME" => "",
+		"FILTER_NAME" => "arrFilter", // подставляем фильтр
 		"HIDE_LINK_WHEN_NO_DETAIL" => "Y",
 		"IBLOCK_ID" => "1",
 		"IBLOCK_TYPE" => "liga",

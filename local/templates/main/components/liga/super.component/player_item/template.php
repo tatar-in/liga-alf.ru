@@ -109,7 +109,7 @@
 					<th scope="col">2ЖК</th>
 					<th scope="col">КК</th>
 					<th scope="col">АГ</th>
-					<th scope="col" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Голы в серии послематчевых пенальти">Пен</th>
+					<th scope="col" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Голы в серии послематчевых пенальти">Пен.</th>
 				</tr>
 			</thead>
 	  		<tbody>
@@ -219,7 +219,7 @@
 					<th scope="col">2ЖК</th>
 					<th scope="col">КК</th>
 					<th scope="col">АГ</th>
-					<th scope="col" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Голы в серии послематчевых пенальти">Пен</th>
+					<th scope="col" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Голы в серии послематчевых пенальти">Пен.</th>
 				</tr>
 			</thead>
 			<tbody>
