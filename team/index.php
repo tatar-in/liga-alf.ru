@@ -65,7 +65,7 @@ $APPLICATION->SetTitle("Команды");
 		"PAGER_TITLE" => "",
 		"PREVIEW_TRUNCATE_LEN" => "",
 		"SEF_FOLDER" => "/team/",
-		"SEF_MODE" => "N",
+		"SEF_MODE" => "Y",
 		"SET_LAST_MODIFIED" => "N",
 		"SET_STATUS_404" => "N",
 		"SET_TITLE" => "Y",
@@ -84,9 +84,10 @@ $APPLICATION->SetTitle("Команды");
 		"USE_SEARCH" => "N",
 		"USE_SHARE" => "N",
 		"COMPONENT_TEMPLATE" => "player-and-team",
-		"VARIABLE_ALIASES" => array(
-			"SECTION_ID" => "",
-			"ELEMENT_ID" => "ID",
+		"SEF_URL_TEMPLATES" => array(
+			"news" => "",
+			"section" => "",
+			"detail" => "#ELEMENT_ID#/",
 		)
 	),
 	false

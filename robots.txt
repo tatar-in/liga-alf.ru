@@ -5,3 +5,4 @@ Disallow: /personal/
 Disallow: */cgi-bin/
 Disallow: /local/
 Sitemap: https://liga-alf.ru/sitemap.xml
+Host: https://liga-alf.ru

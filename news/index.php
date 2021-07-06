@@ -67,7 +67,7 @@ $APPLICATION->SetTitle("Новости");
 		"PAGER_TEMPLATE" => "main",
 		"PAGER_TITLE" => "",
 		"PREVIEW_TRUNCATE_LEN" => "200",
-		"SEF_MODE" => "N",
+		"SEF_MODE" => "Y",
 		"SET_LAST_MODIFIED" => "N",
 		"SET_STATUS_404" => "Y",
 		"SET_TITLE" => "Y",
@@ -99,9 +99,11 @@ $APPLICATION->SetTitle("Новости");
 		"USE_SHARE" => "N",
 		"COMPONENT_TEMPLATE" => "news",
 		"FILE_404" => "",
-		"VARIABLE_ALIASES" => array(
-			"SECTION_ID" => "",
-			"ELEMENT_ID" => "ID",
+		"SEF_FOLDER" => "/news/",
+		"SEF_URL_TEMPLATES" => array(
+			"news" => "",
+			"section" => "#SECTION_ID#/",
+			"detail" => "#ELEMENT_ID#/",
 		)
 	),
 	false
