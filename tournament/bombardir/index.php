@@ -1,6 +1,6 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
-$APPLICATION->SetTitle("Таблица");
+$APPLICATION->SetTitle("Бомбардиры");
 ?>
 
 <?if($_GET["TOURNAMENT"]){
@@ -17,15 +17,13 @@ $APPLICATION->SetTitle("Таблица");
 	);
 
 
-
- $APPLICATION->AddChainItem("Таблица", "table/");
-
+	$APPLICATION->AddChainItem("Бомбардиры", "bombardir/");
 
 
-	$APPLICATION->IncludeComponent("liga:super.component", 
-		"table", 
+	$APPLICATION->IncludeComponent(
+		"liga:super.component", "stat_bombardir", 
 		Array(
-			"IBLOCK_ID" => "3",
+			"TYPE" => "bombardir",
 			"SECTION_ID" => $_GET["TOURNAMENT"],
 			"CACHE_TIME" => "3600",	// Время кеширования (сек.)
 			"CACHE_TYPE" => "A",	// Тип кеширования
@@ -42,6 +40,5 @@ else{
        false // Ссылка на отличную от стандартной 404-ю
 	);
 }?>
-
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>

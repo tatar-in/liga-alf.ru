@@ -11,12 +11,15 @@
 /** @var string $componentPath */
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
-
-//echo '<pre>';print_r($arResult);echo '</pre>';
-
 ?>
 
 <h3><?=$arResult["NAME"]?></h3>
+
+<form class="form-inline pt-3 my-2" method="GET" action="<?=explode("?", $_SERVER['REQUEST_URI'])[0]?>">
+	<input class="form-control mr-sm-2 mb-2" name="search" placeholder="Поиск" type="search" value="<?=$_GET['search']?>">
+	<button class="btn btn-outline-secondary mr-2 mb-2" type="submit">Найти</button>
+	<?if(!empty($_GET['search'])){?><a class="mb-2" href="<?=explode("?", $_SERVER['REQUEST_URI'])[0]?>">Сбросить</a><?}?>
+</form>
 
 <?if($arParams["DISPLAY_TOP_PAGER"]):?>
 	<?=$arResult["NAV_STRING"]?><br />

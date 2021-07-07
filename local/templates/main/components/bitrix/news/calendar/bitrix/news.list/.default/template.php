@@ -60,7 +60,7 @@ $this->setFrameMode(true);
 
 						<?if($arParams["DISPLAY_NAME"]!="N" && $arItem["NAME"]):?>
 							<?if(!$arParams["HIDE_LINK_WHEN_NO_DETAIL"] || ($arItem["DETAIL_TEXT"] && $arResult["USER_HAVE_ACCESS"])):?>
-								<a href="<?echo $arItem["DETAIL_PAGE_URL"]."&SECTION_ID=".$_GET["SECTION_ID"]?>"><?echo $arItem["NAME"]?></a>
+								<a href="<?echo $arItem["DETAIL_PAGE_URL"]."&TOURNAMENT=".$_GET["TOURNAMENT"]?>"><?echo $arItem["NAME"]?></a>
 							<?else:?>
 								<?echo $arItem["NAME"]?>
 							<?endif;?>

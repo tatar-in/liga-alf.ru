@@ -22,7 +22,7 @@
 					<?$file = CFile::ResizeImageGet($value["PREVIEW_PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
 					<tr>
 						<td>
-							<a href="<?=$value["URL"]?>" class="text-reset">
+							<a href="<?=$value["URL"]."?TOURNAMENT=".$arParams["SECTION_ID"]?>" class="text-reset">
 								<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
 								<?echo $value["NAME"]?>
 							</a>

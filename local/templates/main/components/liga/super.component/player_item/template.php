@@ -93,7 +93,7 @@
 	</div>
 </div>
 <div class="table-responsive">
-	<?if(!empty($arParams["SECTION_ID"])){?>
+	<?if($arParams["SECTION_ID"]){?>
 		<h5 class="my-3">Матчи</h5>
 		<table class="table table-hover table-sm ">
 			<thead>
@@ -143,7 +143,7 @@
 							<?=date("d.m.Y", strtotime($value["DATE"]))?>
 						</td>
 						<td>
-							<a href="/tournament/calendar<?=$value['URL']?>&SECTION_ID=<?=$value['SECTION'][0]?>">
+							<a href="/tournament/calendar<?=$value['URL']?>&TOURNAMENT=<?=$value['SECTION'][0]?>">
 								<?=$value["NAME"]?>
 							</a>
 						</td>
@@ -237,7 +237,7 @@
 								$sec[$v["ID"]] = $v["NAME"];
 								if($arResult["ALL_SECTIONS"][$v["ID"]]["UF_STATISTICS"] == 1) { $id = $v["ID"]; } 
 							}?>
-							<a href="/player/?ID=<?=$arParams["PLAYER"]?>&TOURNAMENT=<?=$id?>">
+							<a href="?TOURNAMENT=<?=$id?>">
 								<?echo implode(" &rarr; ", $sec);?>
 							</a>
 						</td>

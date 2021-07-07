@@ -4,5 +4,10 @@ Disallow: /bitrix/
 Disallow: /personal/
 Disallow: */cgi-bin/
 Disallow: /local/
+Disallow: /telegramBot/
+Disallow: */?
+Allow: */?TOURNAMENT=
+Allow: */?PAGEN_1=
+Allow: */?SHOWALL_1=
 Sitemap: https://liga-alf.ru/sitemap.xml
 Host: https://liga-alf.ru

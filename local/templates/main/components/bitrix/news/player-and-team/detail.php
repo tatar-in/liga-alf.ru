@@ -73,7 +73,7 @@ $this->setFrameMode(true);
 if (dirname($_SERVER["REQUEST_URI"]) == "/player") {
 	$APPLICATION->IncludeComponent("liga:super.component", "player_item", Array(
 			"IBLOCK_ID" => "3", // инфоблок, по которому формировать расчет (инфоблок матчей)
-			"PLAYER" => $arResult["VARIABLES"]["ELEMENT_ID"],
+			"PLAYER" => $ElementID,
 			"SECTION_ID" => $_GET["TOURNAMENT"],
 			"DIR" => dirname($_SERVER["REQUEST_URI"]),
 			"CACHE_TIME" => "3600",	// Время кеширования (сек.)
@@ -85,7 +85,7 @@ if (dirname($_SERVER["REQUEST_URI"]) == "/player") {
 elseif (dirname($_SERVER["REQUEST_URI"]) == "/team") {
 	$APPLICATION->IncludeComponent("liga:super.component", "team_item", Array(
 		"IBLOCK_ID" => "3", // инфоблок, по которому формировать расчет (инфоблок матчей)
-		"TEAM" => $arResult["VARIABLES"]["ELEMENT_ID"],
+		"TEAM" => $ElementID,
 		"SECTION_ID" => $_GET["TOURNAMENT"],
 		"DIR" => dirname($_SERVER["REQUEST_URI"]),
 		"CACHE_TIME" => "3600",	// Время кеширования (сек.)

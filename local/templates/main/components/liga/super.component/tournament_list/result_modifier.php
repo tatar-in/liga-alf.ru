@@ -17,7 +17,7 @@ else
 
 	CModule::IncludeModule("iblock");
 
-	$arOrder = array('left_margin' => 'asc');
+	$arOrder = array("ID" => "DESC", 'left_margin' => 'asc');
 	$arFilter = array('IBLOCK_ID' => $arParams["IBLOCK_ID"], "ACTIVE" => "Y", "ELEMENT_SUBSECTIONS" => "N"); 
 	$arSelect = array("ID", "IBLOCK_ID", "IBLOCK_SECTION_ID", "DEPTH_LEVEL", "NAME", "SORT", "ACTIVE", "GLOBAL_ACTIVE", "PICTURE", "SECTION_PAGE_URL", "UF_*");
 	$rsSect = CIBlockSection::GetList($arOrder, $arFilter, true, $arSelect);

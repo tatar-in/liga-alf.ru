@@ -54,7 +54,7 @@
 	  					<tr>
 		  					<td>
 								<?$file = CFile::ResizeImageGet($value["PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
-								<a href="<?=$value["URL"]?>" class="text-reset">
+								<a href="<?=$value["URL"]?><?if($arParams["SECTION_ID"]) echo "?TOURNAMENT=".$arParams["SECTION_ID"];?>" class="text-reset">
 									<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
 									<?=$value["NAME"]?>
 								</a>
@@ -72,7 +72,7 @@
 		</div>
 	</div>
 	<div class="tab-pane fade" id="matches" role="tabpanel" aria-labelledby="matches-tab">
-		<?if(!empty($arParams["SECTION_ID"])){?>
+		<?if($arParams["SECTION_ID"]){?>
 			<table class="table table-hover table-sm ">
 				<thead>
 					<tr>
@@ -114,7 +114,7 @@
 								<?=date("H:i", strtotime($value["DATE"]))?>
 							</td>
 							<td>
-								<a href="/tournament/calendar<?=$value['URL']?>&SECTION_ID=<?=$value['SECTION'][0]?>">
+								<a href="/tournament/calendar<?=$value['URL']?>&TOURNAMENT=<?=$value['SECTION'][0]?>">
 									<?=$value["NAME"]?>
 								</a>
 							</td>
@@ -174,7 +174,7 @@
 									$sec[$v["ID"]] = $v["NAME"];
 									if($arResult["ALL_SECTIONS"][$v["ID"]]["UF_STATISTICS"] == 1) { $id = $v["ID"]; } 
 								}?>
-								<a href="/team/?ID=<?=$arParams["TEAM"]?>&TOURNAMENT=<?=$id?>">
+								<a href="?TOURNAMENT=<?=$id?>">
 									<?echo implode(" &rarr; ", $sec);?>
 								</a>
 							</td>

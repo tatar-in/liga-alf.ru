@@ -128,4 +128,22 @@ $APPLICATION->SetTitle("Title");
 		)
 	),
 	false
-);?><?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+);?>
+
+<?// вызов компонента расчета 
+if ($_GET["TOURNAMENT"]) {
+	$APPLICATION->IncludeComponent("liga:super.component", "player_item", Array(
+			"IBLOCK_ID" => "3", // инфоблок, по которому формировать расчет (инфоблок матчей)
+			"PLAYER" => substr(dirname($_SERVER["REQUEST_URI"]), 8), // вырезаем ID 
+			"SECTION_ID" => $_GET["TOURNAMENT"],
+			"DIR" => dirname($_SERVER["REQUEST_URI"]),
+			"CACHE_TIME" => "3600",	// Время кеширования (сек.)
+			"CACHE_TYPE" => "A",	// Тип кеширования
+		),
+		false
+	);
+}
+?>
+
+
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>

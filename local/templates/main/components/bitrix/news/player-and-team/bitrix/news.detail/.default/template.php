@@ -25,7 +25,7 @@ $this->setFrameMode(true);
 				<?$file = CFile::ResizeImageGet($arResult["DETAIL_PICTURE"], array('width'=>150, 'height'=>150), BX_RESIZE_IMAGE_EXACT, true); ?>
 				<img src="<?=$file["src"]?>" class="rounded w-100" />
 			<?else:?>
-				<img src="<?=SITE_TEMPLATE_PATH?>/image/no<?if($APPLICATION->GetCurDir() == '/team/') {echo 'logo';}elseif($APPLICATION->GetCurDir() == '/player/') {echo 'name';}?>-150.png" class="rounded w-100" />
+				<img src="<?=SITE_TEMPLATE_PATH?>/image/no<?if(mb_stripos($_SERVER['REQUEST_URI'], "team") != false) {echo 'logo';}elseif(mb_stripos($_SERVER['REQUEST_URI'], 'player') != false) {echo 'name';}?>-150.png" class="rounded w-100" />
 			<?endif?>
 		</div>
 		<div class="col-8">

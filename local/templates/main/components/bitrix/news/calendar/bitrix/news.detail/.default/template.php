@@ -30,7 +30,7 @@ $this->setFrameMode(true);
 </div>
 <div class="row align-items-center">
 	<div class="col-4 text-center">
-		<a href="<?=$arResult["DISPLAY_PROPERTIES"]["TEAM_1"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_4"]]["DETAIL_PAGE_URL"];?>" class="text-reset">
+		<a href="<?=$arResult["DISPLAY_PROPERTIES"]["TEAM_1"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_4"]]["DETAIL_PAGE_URL"]."?TOURNAMENT=".$_GET["TOURNAMENT"];?>" class="text-reset">
 			<div class="mx-auto" style="max-width: 100px;">
 				<?$file = CFile::ResizeImageGet($arResult["DISPLAY_PROPERTIES"]["TEAM_1"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_4"]]["PREVIEW_PICTURE"], array('width'=>100, 'height'=>100), BX_RESIZE_IMAGE_EXACT, true);?>
 				<img src="<?=$file["src"]?>" class="w-100">
@@ -65,7 +65,7 @@ $this->setFrameMode(true);
 		?>
 	</div>
 	<div class="col-4 text-center">
-		<a href="<?=$arResult["DISPLAY_PROPERTIES"]["TEAM_2"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_5"]]["DETAIL_PAGE_URL"];?>" class="text-reset">
+		<a href="<?=$arResult["DISPLAY_PROPERTIES"]["TEAM_2"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_5"]]["DETAIL_PAGE_URL"]."?TOURNAMENT=".$_GET["TOURNAMENT"];?>" class="text-reset">
 			<div class="mx-auto" style="max-width: 100px;">
 				<?$file = CFile::ResizeImageGet($arResult["DISPLAY_PROPERTIES"]["TEAM_2"]["LINK_ELEMENT_VALUE"][$arResult["PROPERTY_5"]]["PREVIEW_PICTURE"], array('width'=>100, 'height'=>100), BX_RESIZE_IMAGE_EXACT, true);?>
 				<img src="<?=$file["src"]?>" class="w-100">
@@ -88,7 +88,7 @@ $this->setFrameMode(true);
 						<?foreach ($arResult["DISPLAY_PROPERTIES"]["STRUCTURE_TEAM_".$i]["LINK_ELEMENT_VALUE"] as $key => $value) {?>
 							<tr>
 								<td class="text-nowrap text-truncate">
-									<a href="<?=$value["DETAIL_PAGE_URL"]?>" class=text-reset>
+									<a href="<?=$value["DETAIL_PAGE_URL"]."?TOURNAMENT=".$_GET["TOURNAMENT"];?>" class=text-reset>
 										<?if ($value["PREVIEW_PICTURE"]):?>
 											<?$file = CFile::ResizeImageGet($value["PREVIEW_PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
 											<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
