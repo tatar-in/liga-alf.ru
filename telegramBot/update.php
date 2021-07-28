@@ -8,7 +8,7 @@ if($_GET['command'])
 	$command = explode('_', $_GET['command']);
 	if($command[0] == 'lastposts')
 	{
-		$posts = sendPostToTelegramChannel(getLastVKGroupWallPosts($command[1]));
+		sendPostToTelegramChannel(getLastVKGroupWallPosts($command[1]));
 	}
 	else
 	{
@@ -31,5 +31,7 @@ if (!empty($data['message']['text']))
 	sendTelegram('sendMessage', array('chat_id' => $data['message']['chat']['id'], 'text' => "Вы написали:\n\n".$data['message']['text']));
 }
 
+
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");
 ?>
 

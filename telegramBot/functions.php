@@ -1,12 +1,14 @@
 <?
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
-define('VK', 'ae43d3efae43d3efae43d3efc5ae20e80caae43ae43d3eff5599d07fd8cfa7df5e8240f');
-define('TLGRM', "1880221590:AAGh5XFrA-z7mCO2CEa0RnOejX2L3UKvqBM");
+include_once "private.php";
 
 // Отправляем в telegram канал
 function sendPostToTelegramChannel($posts)
 {
+	// открываем базу
+	$db = createDatabase('vk.db');
+
 	foreach ($posts as $key => $value) 
 	{
 		$types = array_unique(explode(";", $value['attachment_type']));
@@ -20,18 +22,25 @@ function sendPostToTelegramChannel($posts)
 					$media[$k] = array('type' => 'photo', 'media' => $v);
 					if($k==0) $media[$k]['caption'] = $value['description'];
 				}
-				sendTelegram('sendMediaGroup', array('chat_id' => -1001566318537, 'media' => json_encode($media)));
+				$res = sendTelegram('sendMediaGroup', array('chat_id' => -1001566318537, 'media' => json_encode($media)));
 			}
 			else
 			{
-				sendTelegram('sendPhoto', array('chat_id' => -1001566318537, 'photo' => $value['attachments'], 'caption' => $value['description']));
+				$res = sendTelegram('sendPhoto', array('chat_id' => -1001566318537, 'photo' => $value['attachments'], 'caption' => $value['description']));
 			}
 		}
 		else
 		{
-			sendTelegram('sendMessage', array('chat_id' => -1001566318537, 'text' => $value['description']."\n\nhttps://vk.com/club".substr($value['group_id'], 1)."?w=wall".$value['group_id']."_".$value['id']));
+			$res = sendTelegram('sendMessage', array('chat_id' => -1001566318537, 'text' => $value['description']."\n\nhttps://vk.com/club".substr($value['group_id'], 1)."?w=wall".$value['group_id']."_".$value['id']));
+		}
+
+		// отправляем сообщение при ошибке обновления
+		if(!$db->exec("UPDATE posts SET published_tlgrm = ".$res['result']['message_id']." WHERE id = ".$value['id']))
+		{
+			sendTelegram('sendMessage', array('chat_id' => 121231592, 'text' => "Ошибка sendPostToTelegramChannel. Обновление в БД: UPDATE posts SET published_tlgrm = ".$res['result']['message_id']." WHERE id = ".$value['id']));
 		}
 	}
+	$db->close();
 }
 
 // Получаем все посты и добавляем в базу
@@ -187,7 +196,7 @@ function getLastVKGroupWallPosts($id)
 
 		if ($filename == "vk.db")
 		{
-			$db->exec('CREATE TABLE posts ("id" INTEGER PRIMARY KEY NOT NULL, "group_id" INTEGER, "description" TEXT, "date" INTEGER, "attachment_type" TEXT, "attachments" TEXT, "published_tlgrm" BOOLEAN, "published_site" BOOLEAN)');
+			$db->exec('CREATE TABLE posts ("id" INTEGER PRIMARY KEY NOT NULL, "group_id" INTEGER, "description" TEXT, "date" INTEGER, "attachment_type" TEXT, "attachments" TEXT, "published_tlgrm" INTEGER, "published_site" INTEGER)');
 		}
 		elseif ($filename == "tlgrm.db") 
 		{
