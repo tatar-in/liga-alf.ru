@@ -21,13 +21,13 @@ else
 		case "getplayers":
 			$arOrder = Array("ID" => "DESC");
 			$arSelect = Array("ID", "NAME", "DETAIL_PICTURE", "DETAIL_PAGE_URL");
-			$arFilter = Array("IBLOCK_ID" => $arParams['IBLOCK_PLAYER_ID'], "ACTIVE" => "Y", "?NAME" => $_GET["name"], "ID" => $_GET['id']);
-			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $_GET['page']), $arSelect);
+			$arFilter = Array("IBLOCK_ID" => $arParams['IBLOCK_PLAYER_ID'], "ACTIVE" => "Y", "?NAME" => $arParams["NAME"], "ID" => $arParams["ID"]);
+			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $arParams["PAGE"]), $arSelect);
 			
 			// проверяем, чтобы номер страницы не выходил за границы возможных значений
-			if($_GET['page'] && $res->NavPageNomer != $_GET['page']) 
+			if($arParams["PAGE"] && $res->NavPageNomer != $arParams["PAGE"]) 
 			{
-				$arResult['RESULT']['message'] = "No players";
+				$arResult['RESULT']['message'] = "No this page";
 				break;
 			}
 
@@ -60,13 +60,13 @@ else
 		case "getteams":
 			$arOrder = Array("ID" => "DESC");
 			$arSelect = Array("ID", "NAME", "DETAIL_PICTURE", "DETAIL_PAGE_URL");
-			$arFilter = Array("IBLOCK_ID" => $arParams['IBLOCK_TEAM_ID'], "ACTIVE" => "Y", "?NAME" => $_GET["name"], "ID" => $_GET['id']);
-			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $_GET['page']), $arSelect);
+			$arFilter = Array("IBLOCK_ID" => $arParams['IBLOCK_TEAM_ID'], "ACTIVE" => "Y", "?NAME" => $arParams["NAME"], "ID" => $arParams["ID"]);
+			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $arParams["PAGE"]), $arSelect);
 			
 			// проверяем, чтобы номер страницы не выходил за границы возможных значений
-			if($_GET['page'] && $res->NavPageNomer != $_GET['page']) 
+			if($arParams["PAGE"] && $res->NavPageNomer != $arParams["PAGE"]) 
 			{
-				$arResult['RESULT']['message'] = "No teams";
+				$arResult['RESULT']['message'] = "No this page";
 				break;
 			}
 
@@ -97,10 +97,12 @@ else
 
 			break;
 		case "gettournaments":
+			$arResult['RESULT']['count'] = "";
+			$arResult['RESULT']['pages'] = 1; // всегда 1 (нет постранички)
+
 			$arOrder = array("ID" => "DESC");
 			$arSelect = array("ID", "IBLOCK_SECTION_ID", "DEPTH_LEVEL", "NAME", "UF_STATISTICS", "UF_ARCHIVE", "PICTURE");
-			$arFilter = array('IBLOCK_ID' => $arParams["IBLOCK_TOURNAMENT_ID"], "GLOBAL_ACTIVE" => "Y", "ACTIVE" => "Y", "ELEMENT_SUBSECTIONS" => "N",
-				"ID" => $_GET['id']); 
+			$arFilter = array('IBLOCK_ID' => $arParams["IBLOCK_TOURNAMENT_ID"], "GLOBAL_ACTIVE" => "Y", "ACTIVE" => "Y", "ELEMENT_SUBSECTIONS" => "N"); 
 			$res = CIBlockSection::GetList($arOrder, $arFilter, false, $arSelect);
 			while ($ob = $res->GetNext())
 			{
@@ -118,14 +120,6 @@ else
 					);
 			}
 
-			// проверяем, удалось ли сформировать результат в соответствии с параметрами
-			if(!$arResult['RESULT']['result']) 
-			{
-				$arResult['RESULT']['message'] = "Tournaments are not found";
-				break;
-			}
-			else $arResult['RESULT']['ok'] = true;
-
 			// рассчитываем туры (этапы), которые были в турнире
 			foreach ($arResult['RESULT']['result'] as $key => $value) 
 			{
@@ -140,14 +134,38 @@ else
 				$arResult['RESULT']['result'][$value['id']]['stage'] = array_values($arResult['RESULT']['result'][$value['id']]['stage']);
 			}
 
-			// убираем ненужные подкатегории (служебные)
+			// убираем ненужные подкатегории (подтурниры / категории, по которым не производится расчет статистики)
 			foreach ($arResult['RESULT']['result'] as $key => $value) 
 			{
 				if($value['statistic'] == 1 || $value['sub']) continue;
 				unset($arResult['RESULT']['result'][$key]);
 			}
 			
-			$arResult['RESULT']['result'] = array_values($arResult['RESULT']['result']);
+			// фильтруем, если был задан id
+			if($arParams["ID"])
+				foreach ($arResult['RESULT']['result'] as $key => $value) 
+					if($value['id'] != $arParams["ID"]) unset($arResult['RESULT']['result'][$key]);
+			// фильтруем, если был задан depth
+			if($arParams["DEPTH"])
+				foreach ($arResult['RESULT']['result'] as $key => $value) 
+					if($value['depth'] != $arParams["DEPTH"]) unset($arResult['RESULT']['result'][$key]);
+
+
+			// проверяем, удалось ли сформировать результат в соответствии с параметрами
+			if(!$arResult['RESULT']['result']) 
+			{
+				$arResult['RESULT']['message'] = "Tournaments are not found";
+				unset($arResult['RESULT']['count']);
+				unset($arResult['RESULT']['pages']);
+			}
+			else
+			{
+				$arResult['RESULT']['ok'] = true;
+				$arResult['RESULT']['count'] = count($arResult['RESULT']['result']);
+				$arResult['RESULT']['pages'] = 1;
+				$arResult['RESULT']['result'] = array_values($arResult['RESULT']['result']);
+
+			}
 
 			break;
 		case "getmatches":
@@ -189,16 +207,16 @@ else
 				"PROPERTY_AUTO_GOALS_TEAM_1", "PROPERTY_AUTO_GOALS_TEAM_2", 
 				"PROPERTY_PENALTY_TEAM_1", "PROPERTY_PENALTY_TEAM_2");
 			$arFilter = Array("IBLOCK_ID" => $arParams['IBLOCK_TOURNAMENT_ID'], "ACTIVE" => "Y", "SECTION_GLOBAL_ACTIVE" => "Y", 
-				"SECTION_ID" =>  $_GET['tournament'], "INCLUDE_SUBSECTIONS" => "Y",
-				"?NAME" => $_GET["name"], "ID" => $_GET['id'], "PROPERTY_STAGE_VALUE" => $_GET['stage'], 
-				">=DATE_ACTIVE_FROM" => ($_GET['datefrom']) ? ConvertDateTime($_GET['datefrom'], "DD.MM.YYYY")." 00:00:00" : "", 
-				"<=DATE_ACTIVE_FROM" => ($_GET['dateto']) ? ConvertDateTime($_GET['dateto'], "DD.MM.YYYY")." 23:59:59" : "");
-			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $_GET['page']), $arSelect);
+				"SECTION_ID" =>  $arParams["TOURNAMENT"], "INCLUDE_SUBSECTIONS" => "Y",
+				"?NAME" => $arParams["NAME"], "ID" => $arParams["ID"], "PROPERTY_STAGE_VALUE" => $arParams["STAGE"], 
+				">=DATE_ACTIVE_FROM" => ($arParams["DATEFROM"]) ? ConvertDateTime($arParams["DATEFROM"], "DD.MM.YYYY")." 00:00:00" : "", 
+				"<=DATE_ACTIVE_FROM" => ($arParams["DATETO"]) ? ConvertDateTime($arParams["DATETO"], "DD.MM.YYYY")." 23:59:59" : "");
+			$res = CIBlockElement::GetList($arOrder, $arFilter, false, array("nPageSize" => 20, "bShowAll" => false,'iNumPage' => $arParams["PAGE"]), $arSelect);
 			
 			// проверяем, чтобы номер страницы не выходил за границы возможных значений
-			if($_GET['page'] && $res->NavPageNomer != $_GET['page']) 
+			if($arParams["PAGE"] && $res->NavPageNomer != $arParams["PAGE"]) 
 			{
-				$arResult['RESULT']['message'] = "No matches";
+				$arResult['RESULT']['message'] = "No this page";
 				break;
 			}
 			
@@ -207,26 +225,34 @@ else
 
 			while($ob = $res->GetNext())
 			{
+				$arR = [];
 				$arR['id'] = $ob['ID'];
 				$arR['stage'] = $ob["PROPERTY_STAGE_VALUE"];
 				$arR['date'] = date("d.m.Y H:i", strtotime($ob['DATE_ACTIVE_FROM']));
 				$arR['name'] = $ob['NAME'];
 
-				// получаем турнир, к которому относится матч и относительно которого производится расчет статистики
+				// получаем привязку матча к турниру
 				$section = CIBlockElement::GetElementGroups($ob["ID"], true);
 				while($arS = $section->GetNext())
 				{
-					$tournament = $arS["ID"];
-					while (true)
-					{ 
-						if($tournaments[$tournament]['UF_STATISTICS'] == 1) break;
-						$tournament = $tournaments[$tournament]['IBLOCK_SECTION_ID'];
-					}
-					$tournament = array('id' => $tournament, 'name' => $tournaments[$tournament]["NAME"]);
+					// получаем иерархию вложенности турнира (подтурниры / категории)
+					$arR["tournament"]=[];
+					$nav = CIBlockSection::GetNavChain($arParams['IBLOCK_TOURNAMENT_ID'], $arS["ID"], array("ID", "NAME"));
+				    while($arItem = $nav->GetNext()){
+				        $arR["tournament"][] = array('id' => $arItem["ID"], 'name' => $arItem["NAME"], 'parent' => $arItem["IBLOCK_SECTION_ID"], 'statistic' => $tournaments[$arItem["ID"]]["UF_STATISTICS"]);
+				    }
 				}
 
-				$arR['tournament'] = $tournament;
-				$arR['url'] = 'https://liga-alf.ru/tournament/calendar'.$ob["DETAIL_PAGE_URL"].'&TOURNAMENT='.$tournament['id'];
+				// получаем турнир, относительно которого производится расчет статистики (для формирования корректного URL)
+				foreach ($arR["tournament"] as $key => $value) 
+				{
+					if($value['statistic'] == 1) 
+					{
+						$tournament = $value['id'];
+						break;
+					}
+				}
+				$arR['url'] = 'https://liga-alf.ru/tournament/calendar'.$ob["DETAIL_PAGE_URL"].'&TOURNAMENT='.$tournament;
 				$arR['team_1'] = array('id' => $ob['PROPERTY_TEAM_1_VALUE'], 'name' => $ob['PROPERTY_TEAM_1_NAME']);
 				$arR['team_2'] = array('id' => $ob['PROPERTY_TEAM_2_VALUE'], 'name' => $ob['PROPERTY_TEAM_2_NAME']);
 				if(!empty($ob["PROPERTY_STRUCTURE_TEAM_1_VALUE"]) && !empty($ob["PROPERTY_STRUCTURE_TEAM_2_VALUE"]))
