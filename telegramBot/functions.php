@@ -186,6 +186,134 @@ function getLastVKGroupWallPosts($id)
 	return $res;
 }
 
+// Отправка расписания матчей. Обработка команд /laststage, /nextstage и вывод ответа функции chooseStageByTelegramBot
+function sendMatchesByTelegramBot($chat_id, $params = null, $command = null)
+{
+	$query = http_build_query($params);
+	$response = getSite('getmatches', $query);
+	$result = $response['result']; 
+
+	// проходимся по страницам API и собираем результат
+	$pages = $response['pages'];
+	for ($i = 2; $i <= $pages; $i++) 
+	{ 
+		$params['page'] = $i;
+		$query = http_build_query($params);
+		$response = getSite('getmatches', $query);
+		$result = array_merge($result, $response['result']);
+	}	
+	
+	// переворачиваем массив, т.к. сортировка в API по убыванию, а нам нужны ближайшие игры 
+	// (актуально, если расписание на несколько туров вперед)
+	if($command == "nextstage") $result = array_reverse($result);
+	
+	foreach ($result as $key => $value) 
+	{
+		// переформируем массив игр так, чтобы иметь возможность получать информацию о матче по id
+		$matches[$value['id']] = $value;
+		// из принадлежности матча к турнирам формируем массив турниров таким образом, чтобы последний турнир содержал массив этапов
+		// (достаточно универсальный вариант формирования вывода, т.к. всю необходимую информацию содержат выбранные матчи - навигационная цепочка турниров)
+		foreach ($value['tournament'] as $k => $v) 
+		{
+			$tournament[$v['id']]['id'] = $v['id']; 
+			$tournament[$v['id']]['name'] = $v['name']; 
+			$tournament[$v['id']]['parent'] = $v['parent']; 
+			$tournament[$v['id']]['statistic'] = $v['statistic'];
+			if($k == count($value['tournament'])-1) $tournament[$v['id']]['stages'][$value['stage']][$value['id']] = $value['id'];
+		}
+	}
+	
+	// проходимся по турнирам и формируем ответ
+	foreach ($tournament as $key => $value)
+	{
+		$str .= (!$value['parent']) ? "<b>".strtoupper($value['name'])."</b>\n\n" : "<b>".$value['name']."</b>\n\n";
+		// если турнир последний, т.е. содержит этапы, перебираем этапы 
+		if($value['stages']) {
+			foreach ($value['stages'] as $k => $v) {
+				$str .= $k."\n\n";
+				// выводим матчи
+				foreach ($v as $k1 => $v1) {
+					$str .= $matches[$v1]['date'].' <a href="'.$matches[$v1]['url'].'">'.$matches[$v1]['name']."</a> ".((isset($matches[$v1]['score_1']) && isset($matches[$v1]['score_2'])) ? $matches[$v1]['score_1'].":".$matches[$v1]['score_2'] : "-:-")."\n";
+				}
+				break; // ограничиваемся одним ближайшим этапом
+			}
+			$str .= "\n";
+		}
+		// если по турниру осуществляется рассчет статистики, выводим дополнительные ссылки
+		if($value['statistic'] == 1) {
+			$str .= '<a href="https://liga-alf.ru/tournament/table/?TOURNAMENT='.$value['id'].'">Таблица</a>'."\n";
+			$str .= '<a href="https://liga-alf.ru/tournament/bombardir/?TOURNAMENT='.$value['id'].'">Бомбардиры</a>'."\n";
+			$str .= '<a href="https://liga-alf.ru/tournament/warning/?TOURNAMENT='.$value['id'].'">Карточки</a>'."\n";
+			$str .= '<a href="https://liga-alf.ru/tournament/autogoals/?TOURNAMENT='.$value['id'].'">Автоголы</a>'."\n";
+			$str .= "\n";
+		}
+	}
+	sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => $str, 'parse_mode' => 'html'));
+}
+
+// Обработка команды /choosestage - варианты выбора турниров и этапов (туров)
+function chooseStageByTelegramBot($chat_id, $command, $message_id = null)
+{	
+	$commands = explode("_", $command);
+	if(count($commands) == 1) $params = array('depth' => 1); // ищем по верхнеуровневым турнирам (шаг 1)
+	elseif (count($commands) == 2) $params = array();		// выбираем все турниры, чтобы потом обработать
+	$query = http_build_query($params);
+	$response = getSite('gettournaments', $query);
+	$result = $response['result']; 
+
+	// формируем варианты верхнеуровневых турниров (шаг 1)
+	if(count($commands) == 1){
+		// формируем кнопки для inline клавиатуры
+		foreach ($result as $key => $value) {
+			$buttons[] = array('text' => $value['name'], 'callback_data' => $commands[0]."_".$value['id']);
+			if(count($buttons) == 2){
+				$keyboard['inline_keyboard'][] = $buttons;
+				$buttons = [];
+			}
+		}
+		$keyboard['inline_keyboard'][] = $buttons;	// оставшиеся кнопки (если их меньше 2)
+		sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => "Выбери турнир, информация по матчам которого тебя интересует:", 'reply_markup' => json_encode($keyboard)));
+	}
+	// проверяем выбранный турнир и выдаем либо варианты вложенных турниров, либо варианты этапов/туров (шаг 2 или далее)
+	elseif (count($commands) == 2) {
+		// переформируем массив турниров, чтобы потом по id турнира получать необходимую информацию
+		foreach ($result as $key => $value) 
+			$tournaments[$value['id']] = $value;
+
+		foreach ($result as $key => $value) {
+			// если выбранный пользователем турнир содержит вложенные несвязанные турниры, формируем варианты вложенных турниров
+			if($commands[1] == $value['id'] && $value['sub']){
+				foreach ($value['sub'] as $k => $v) {
+					$buttons[] = array('text' => $tournaments[$v]['name'], 'callback_data' => $commands[0]."_".$v);
+					if(count($buttons) == 2){
+						$keyboard['inline_keyboard'][] = $buttons;
+						$buttons = [];
+					}
+				}
+				$keyboard['inline_keyboard'][] = $buttons;	// оставшиеся кнопки (если их меньше 2)
+				sendTelegram('editMessageText', array('chat_id' => $chat_id, 'message_id' => $message_id, 'text' => "Выбранный турнир содержит другие вложенные турниры, ведущие свою собственную статистику.\nУточни интересующий турнир:", 'reply_markup' => json_encode($keyboard)));			
+			}
+			// если выбранный пользователем турнир конечный, формируем варианты этапов/туров
+			elseif ($commands[1] == $value['id'] && $value['stage']) {
+				foreach ($value['stage'] as $k => $v) {
+					$buttons[] = array('text' => $v, 'callback_data' => $commands[0]."_".$value['id']."_".$v);
+					if(count($buttons) == 3){
+						$keyboard['inline_keyboard'][] = $buttons;
+						$buttons = [];
+					}
+				}
+				$keyboard['inline_keyboard'][] = $buttons;	// оставшиеся кнопки (если их меньше 3)
+				sendTelegram('editMessageText', array('chat_id' => $chat_id, 'message_id' => $message_id, 'text' => "Выбери этап турнира, информация по матчам которого тебя интересует:", 'reply_markup' => json_encode($keyboard)));			
+			}		
+		}
+	}
+	// заключительный шаг - отправка запроса в функцию sendMatchesByTelegramBot для формирования ответа
+	elseif(count($commands) == 3){
+		sendTelegram('editMessageText', array('chat_id' => $chat_id, 'message_id' => $message_id, 'text' => "Начал работать...", 'reply_markup' => ""));
+		sendMatchesByTelegramBot($chat_id, array('tournament' => $commands[1], 'stage' => $commands[2]));
+	}
+}
+
 //------------Database----------------------------------------------------------------------------------------------------------------
 
 	function createDatabase($filename)
@@ -238,7 +366,7 @@ function getLastVKGroupWallPosts($id)
 	// Функция вызова методов API VK
 	function getVk($method, $params)
 	{
-		$ch = curl_init('https://api.vk.com/method/' . $method . '?access_token=' . VK . '&' . $params); //'domain=alf_alexin&count=10&v=5.84&);  
+		$ch = curl_init('https://api.vk.com/method/' . $method . '?access_token=' . VK . '&' . $params);  
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$res = curl_exec($ch);
 		curl_close($ch);
@@ -252,6 +380,28 @@ function getLastVKGroupWallPosts($id)
 			exit();	
 		}
 	 
+		return $res;
+	}
+
+//------------Site API----------------------------------------------------------------------------------------------------------------
+
+	function getSite($action, $params = null)
+	{
+		$params = ($params) ? '&'.$params : "";
+		$ch = curl_init('https://liga-alf.ru/api/?action=' . $action . $params);  
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$res = curl_exec($ch);
+		curl_close($ch);
+
+		$res = json_decode($res, true);
+
+		// если не успешный запрос, останавливаем и отправляем сообщение
+		if(!$res['ok'] && $res['message'] == "Action undefined")
+		{
+			sendTelegram('sendMessage', array('chat_id' => 121231592, 'text' => 'Ошибка getSite. Описание ошибки site: '.$res['message'].'. Запрос: https://liga-alf.ru/api/?'.$action.$params));
+			exit();	
+		}
+
 		return $res;
 	}
 
