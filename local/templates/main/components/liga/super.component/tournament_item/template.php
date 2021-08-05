@@ -54,7 +54,7 @@
 	<a id="bombardir" class="flex-sm-fill text-sm-center nav-link border border-primary mx-1 <?if($arParams["DIR"]=="/tournament/bombardir") echo 'active';?>" href="/tournament/bombardir/?TOURNAMENT=<?=$arParams["SECTION_ID"]?>">Бомбардиры</a>
 	<a id="warning" class="flex-sm-fill text-sm-center nav-link border border-primary mx-1 <?if($arParams["DIR"]=="/tournament/warning") echo 'active';?>" href="/tournament/warning/?TOURNAMENT=<?=$arParams["SECTION_ID"]?>">Карточки</a>
 	<a id="autogoals" class="flex-sm-fill text-sm-center nav-link border border-primary mx-1 <?if($arParams["DIR"]=="/tournament/autogoals") echo 'active';?>" href="/tournament/autogoals/?TOURNAMENT=<?=$arParams["SECTION_ID"]?>">Автоголы</a>
-	<a id="statistic" class="flex-sm-fill text-sm-center nav-link border border-primary mx-1 <?if($arParams["DIR"]=="/tournament/statistic") echo 'active';?>" href="/tournament/statistic/?TOURNAMENT=<?=$arParams["SECTION_ID"]?>">Статистика</a>
+	<?/*<a id="statistic" class="flex-sm-fill text-sm-center nav-link border border-primary mx-1 <?if($arParams["DIR"]=="/tournament/statistic") echo 'active';?>" href="/tournament/statistic/?TOURNAMENT=<?=$arParams["SECTION_ID"]?>">Статистика</a>*/?>
 </nav>
 
 
