@@ -13,7 +13,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 /** @var CBitrixComponent $component */
 $this->setFrameMode(false);
 
-//echo '<pre>';print_r($arResult);echo '</pre>';
+// echo '<pre>';print_r($arResult);echo '</pre>';
 
 if($_GET['active']=="N" && $_GET['CODE'] && $_GET['edit']=="Y"){
 
@@ -336,7 +336,11 @@ else
 											if($arResult["PROPERTY_LIST_FULL"][$propertyID]["MULTIPLE"] == "N"){
 												echo "<option></option>";
 											}
-											$fgc = file_get_contents("https://liga-alf.ru/api/players.php");
+											
+											$fgc = "";
+											foreach ($arResult['PLAYERS'] as $key => $value) {
+												$fgc .= '<option value="'.$value["ID"].'">'.$value["NAME"].'</option>';
+											}
 										
 											foreach($arResult['ELEMENT_PROPERTIES'][$propertyID] as $key){
 												$value = $key["VALUE"];
@@ -349,7 +353,11 @@ else
 											if($arResult["PROPERTY_LIST_FULL"][$propertyID]["MULTIPLE"] == "N"){
 												echo "<option></option>";
 											}
-											$fgc = file_get_contents("https://liga-alf.ru/api/teams.php");	 
+
+											$fgc = "";
+											foreach ($arResult['TEAMS'] as $key => $value) {
+												$fgc .= '<option value="'.$value["ID"].'">'.$value["NAME"].'</option>';
+											}
 
 											foreach($arResult['ELEMENT_PROPERTIES'][$propertyID] as $key){
 												$value = $key["VALUE"];
