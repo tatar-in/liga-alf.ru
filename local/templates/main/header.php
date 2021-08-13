@@ -14,7 +14,7 @@ IncludeTemplateLangFile(__FILE__);
 	<link type="image/png" sizes="120x120" rel="icon" href="<?=SITE_TEMPLATE_PATH?>/image/favicon-120x120.png">
 
 	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="<?=SITE_TEMPLATE_PATH?>/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" >
+	<link rel="stylesheet" href="<?=SITE_TEMPLATE_PATH?>/css/bootstrap.min.css" >
 	<link href="<?=SITE_TEMPLATE_PATH?>/css/select2.min.css" rel="stylesheet" />
 	
 	<script src="<?=SITE_TEMPLATE_PATH?>/js/jquery-3.5.1.js"></script>

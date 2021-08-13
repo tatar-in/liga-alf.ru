@@ -56,6 +56,12 @@ $this->setFrameMode(true);
 				echo ")</span>";
 			}
 		}
+		elseif (($arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]=="0" || $arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]>0) && ($arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]=="0" || $arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]>0))
+		{
+			echo '<span class="h1 font-weight-bold align-middle">';
+			echo $arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"].":".$arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"];
+			echo '</span>';
+		}
 		else
 		{
 			echo '<span class="h1 font-weight-bold align-middle">';
@@ -77,95 +83,100 @@ $this->setFrameMode(true);
 	</div>
 </div>
 <div class="row mt-5">
-	<?for ($i=1; $i<=2; $i++):?>
-		<div class="col-md-6">
-			<div class="table-responsive">
-				<?if(count($arResult["DISPLAY_PROPERTIES"]["STRUCTURE_TEAM_1"]["VALUE"])>0 && count($arResult["DISPLAY_PROPERTIES"]["STRUCTURE_TEAM_2"]["VALUE"])>0):?>
+	<?if(!empty($arResult["PROPERTIES"]["STRUCTURE_TEAM_1"]["VALUE"]) && !empty($arResult["PROPERTIES"]["STRUCTURE_TEAM_2"]["VALUE"])){?>
+		<?for ($i=1; $i<=2; $i++):?>
+			<div class="col-md-6">
+				<div class="table-responsive">
 					<h5 class="d-block d-md-none"><?=$arResult["DISPLAY_PROPERTIES"]["TEAM_".$i]["LINK_ELEMENT_VALUE"][$arResult["DISPLAY_PROPERTIES"]["TEAM_".$i]["VALUE"]]["NAME"]?></h5>
-				<?endif;?>
-				<table class="table table-hover table-sm">
-					<tbody>
-						<?foreach ($arResult["DISPLAY_PROPERTIES"]["STRUCTURE_TEAM_".$i]["LINK_ELEMENT_VALUE"] as $key => $value) {?>
-							<tr>
-								<td class="text-nowrap text-truncate">
-									<a href="<?=$value["DETAIL_PAGE_URL"]."?TOURNAMENT=".$_GET["TOURNAMENT"];?>" class=text-reset>
-										<?if ($value["PREVIEW_PICTURE"]):?>
-											<?$file = CFile::ResizeImageGet($value["PREVIEW_PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
-											<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
-										<?endif;?>
-										<?=$value["NAME"];?>
-									</a>
-								</td>
-								<?if($arResult["DISPLAY_PROPERTIES"]["GOALS_TEAM_".$i]["VALUE"]):?>
-									<td class="text-nowrap">
-										<?$count=0;
-										foreach ($arResult["DISPLAY_PROPERTIES"]["GOALS_TEAM_".$i]["VALUE"] as $k => $v) {
-											if($v == $key) $count++;
-										}?>
-										<?if ($count>0) :?>
-											<img src="<?=SITE_TEMPLATE_PATH?>/image/goal-30x30.png" height="20" class="rounded">
-											<?if ($count>1) {?>
-												<small>x</small> <?=$count;?>
-											<?}?>
-										<?endif;?>
+					<table class="table table-hover table-sm">
+						<tbody>
+							<?foreach ($arResult["DISPLAY_PROPERTIES"]["STRUCTURE_TEAM_".$i]["LINK_ELEMENT_VALUE"] as $key => $value) {?>
+								<tr>
+									<td class="text-nowrap text-truncate">
+										<a href="<?=$value["DETAIL_PAGE_URL"]."?TOURNAMENT=".$_GET["TOURNAMENT"];?>" class=text-reset>
+											<?if ($value["PREVIEW_PICTURE"]):?>
+												<?$file = CFile::ResizeImageGet($value["PREVIEW_PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
+												<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
+											<?endif;?>
+											<?=$value["NAME"];?>
+										</a>
 									</td>
-								<?endif;?>
-								<?if($arResult["DISPLAY_PROPERTIES"]["YELLOW_CARDS_TEAM_".$i]["VALUE"]):?>
-									<td>
-										<?if($arResult["DISPLAY_PROPERTIES"]["YELLOW_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
-											<img src="<?=SITE_TEMPLATE_PATH?>/image/yellowcard-15x30.png" height="20" class="rounded">
-										<?endif;?>
-									</td>
-								<?endif;?>
-								<?if($arResult["DISPLAY_PROPERTIES"]["TWO_YELLOW_CARDS_TEAM_".$i]["VALUE"]):?>
-									<td>
-										<?if($arResult["DISPLAY_PROPERTIES"]["TWO_YELLOW_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
-											<img src="<?=SITE_TEMPLATE_PATH?>/image/2yellowcards-25x30.png" height="20" class="rounded">
-										<?endif;?>
-									</td>
-								<?endif;?>
-								<?if($arResult["DISPLAY_PROPERTIES"]["RED_CARDS_TEAM_".$i]["VALUE"]):?>
-									<td>
-										<?if($arResult["DISPLAY_PROPERTIES"]["RED_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
-											<img src="<?=SITE_TEMPLATE_PATH?>/image/redcard-15x30.png" height="20" class="rounded">
-										<?endif;?>
-									</td>
-								<?endif;?>
-								<?if($arResult["DISPLAY_PROPERTIES"]["AUTO_GOALS_TEAM_".$i]["VALUE"]):?>
-									<td class="text-nowrap">
-										<?$count=0;
-										foreach ($arResult["DISPLAY_PROPERTIES"]["AUTO_GOALS_TEAM_".$i]["VALUE"] as $k => $v) {
-											if($v == $key) $count++;
-										}?>
-										<?if ($count>0) :?>
-											<span class="text-danger">A</span>
-											<?if ($count>1) {?>
-												<small>x</small> <?=$count;?>
-											<?}?>
-										<?endif;?>
-									</td>
-								<?endif;?>
-								<?if($arResult["DISPLAY_PROPERTIES"]["PENALTY_TEAM_".$i]["VALUE"]):?>
-									<td class="text-nowrap">
-										<?$count=0;
-										foreach ($arResult["DISPLAY_PROPERTIES"]["PENALTY_TEAM_".$i]["VALUE"] as $k => $v) {
-											if($v == $key) $count++;
-										}?>
-										<?if ($count>0) :?>
-											<span class="text-danger">П</span>
-											<?if ($count>1) {?>
-												<small>x</small> <?=$count;?>
-											<?}?>
-										<?endif;?>
-									</td>
-								<?endif;?>
-							</tr>
-						<?}?>
-					</tbody>
-				</table>
+									<?if($arResult["DISPLAY_PROPERTIES"]["GOALS_TEAM_".$i]["VALUE"]):?>
+										<td class="text-nowrap">
+											<?$count=0;
+											foreach ($arResult["DISPLAY_PROPERTIES"]["GOALS_TEAM_".$i]["VALUE"] as $k => $v) {
+												if($v == $key) $count++;
+											}?>
+											<?if ($count>0) :?>
+												<img src="<?=SITE_TEMPLATE_PATH?>/image/goal-30x30.png" height="20" class="rounded">
+												<?if ($count>1) {?>
+													<small>x</small> <?=$count;?>
+												<?}?>
+											<?endif;?>
+										</td>
+									<?endif;?>
+									<?if($arResult["DISPLAY_PROPERTIES"]["YELLOW_CARDS_TEAM_".$i]["VALUE"]):?>
+										<td>
+											<?if($arResult["DISPLAY_PROPERTIES"]["YELLOW_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
+												<img src="<?=SITE_TEMPLATE_PATH?>/image/yellowcard-15x30.png" height="20" class="rounded">
+											<?endif;?>
+										</td>
+									<?endif;?>
+									<?if($arResult["DISPLAY_PROPERTIES"]["TWO_YELLOW_CARDS_TEAM_".$i]["VALUE"]):?>
+										<td>
+											<?if($arResult["DISPLAY_PROPERTIES"]["TWO_YELLOW_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
+												<img src="<?=SITE_TEMPLATE_PATH?>/image/2yellowcards-25x30.png" height="20" class="rounded">
+											<?endif;?>
+										</td>
+									<?endif;?>
+									<?if($arResult["DISPLAY_PROPERTIES"]["RED_CARDS_TEAM_".$i]["VALUE"]):?>
+										<td>
+											<?if($arResult["DISPLAY_PROPERTIES"]["RED_CARDS_TEAM_".$i]["LINK_ELEMENT_VALUE"][$key]):?>
+												<img src="<?=SITE_TEMPLATE_PATH?>/image/redcard-15x30.png" height="20" class="rounded">
+											<?endif;?>
+										</td>
+									<?endif;?>
+									<?if($arResult["DISPLAY_PROPERTIES"]["AUTO_GOALS_TEAM_".$i]["VALUE"]):?>
+										<td class="text-nowrap">
+											<?$count=0;
+											foreach ($arResult["DISPLAY_PROPERTIES"]["AUTO_GOALS_TEAM_".$i]["VALUE"] as $k => $v) {
+												if($v == $key) $count++;
+											}?>
+											<?if ($count>0) :?>
+												<span class="text-danger">A</span>
+												<?if ($count>1) {?>
+													<small>x</small> <?=$count;?>
+												<?}?>
+											<?endif;?>
+										</td>
+									<?endif;?>
+									<?if($arResult["DISPLAY_PROPERTIES"]["PENALTY_TEAM_".$i]["VALUE"]):?>
+										<td class="text-nowrap">
+											<?$count=0;
+											foreach ($arResult["DISPLAY_PROPERTIES"]["PENALTY_TEAM_".$i]["VALUE"] as $k => $v) {
+												if($v == $key) $count++;
+											}?>
+											<?if ($count>0) :?>
+												<span class="text-danger">П</span>
+												<?if ($count>1) {?>
+													<small>x</small> <?=$count;?>
+												<?}?>
+											<?endif;?>
+										</td>
+									<?endif;?>
+								</tr>
+							<?}?>
+						</tbody>
+					</table>
+				</div>
 			</div>
+		<?endfor;?>
+	<?}
+	elseif (($arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]=="0" || $arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]>0) && ($arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]=="0" || $arResult["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]>0)){?>
+		<div class="text-center w-100">
+			техническое поражение
 		</div>
-	<?endfor;?>
+	<?}?>
 </div>
 
 

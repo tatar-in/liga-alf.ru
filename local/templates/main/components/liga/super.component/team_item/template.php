@@ -64,6 +64,7 @@
 		  					<td><?=$value["YCARDS"]?></td>
 		  					<td><?=$value["2YCARDS"]?></td>
 		  					<td><?=$value["RCARDS"]?></td>
+		  					<td><?=$value["AUTOGOALS"]?></td>
 		  					<td><?=$value["PENALTY"]?></td>
 		  				</tr>
 					<?}?>
@@ -86,7 +87,6 @@
 						<th scope="col">2ЖК</th>
 						<th scope="col">КК</th>
 						<th scope="col">АГ</th>
-						<th scope="col" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Голы в серии послематчевых пенальти">Пен.</th>
 					</tr>
 				</thead>
 		  		<tbody>
@@ -119,11 +119,21 @@
 								</a>
 							</td>
 							<td>
-								<?if (!empty($value['STRUCTURE_1']) && !empty($value['STRUCTURE_2'])) {?>
-									<span style="font-weight:500;" class="<?if(count($value['GOALS_1']) == count($value['GOALS_2'])){echo 'text-dark';} 
-									elseif(($arParams['TEAM'] == $value['TEAM_1'] && count($value['GOALS_1']) > count($value['GOALS_2'])) || ($arParams['TEAM'] == $value['TEAM_2'] && count($value['GOALS_2']) > count($value['GOALS_1']))){echo 'text-success';} 
+								<?if (!empty($value['STRUCTURE_1']) && !empty($value['STRUCTURE_2'])) {
+									$score1 = count($value['GOALS_1']) + count($value['AUTOGOALS_2']) + count($value['PENALTY_1']);
+									$score2 = count($value['GOALS_2']) + count($value['AUTOGOALS_1']) + count($value['PENALTY_2']);?>
+									<span style="font-weight:500;" class="<?if($score1 == $score2){echo 'text-dark';} 
+									elseif(($arParams['TEAM'] == $value['TEAM_1'] && $score1 > $score2) || ($arParams['TEAM'] == $value['TEAM_2'] && $score2 > $score1)){echo 'text-success';} 
 									else{echo 'text-danger';}?>">
-										<?echo count($value["GOALS_1"]).":".count($value["GOALS_2"]);?>
+										<?echo (count($value["GOALS_1"])+count($value["AUTOGOALS_2"])).":".(count($value["GOALS_2"])+count($value["AUTOGOALS_1"]));?>
+										<?if(count($value['PENALTY_1'])>0 || count($value['PENALTY_2'])>0) {
+											echo " <small>(".count($value['PENALTY_1']).":".count($value['PENALTY_2']).")</small>";
+										}?>
+									</span>
+								<?}
+								elseif(($value["TECHNICAL_DEFEAT_1"]=="0" || $value["TECHNICAL_DEFEAT_1"]>0) && ($value["TECHNICAL_DEFEAT_2"]=="0" || $value["TECHNICAL_DEFEAT_2"]>0)){?>
+									<span style="font-weight:500;" class="<?if($arParams['TEAM'] == $value['TEAM_1'] && $value["TECHNICAL_DEFEAT_1"] > $value["TECHNICAL_DEFEAT_1"]){echo 'text-success';}else{echo 'text-danger';}?>"> 
+										<?echo $value["TECHNICAL_DEFEAT_1"].":".$value["TECHNICAL_DEFEAT_2"]." <small>(т.п.)</small>";?>
 									</span>
 								<?}?>
 							</td>
@@ -142,10 +152,6 @@
 							<td>
 								<?if($arParams["TEAM"] == $value["TEAM_1"] && !empty($value["AUTOGOALS_1"])) echo count($value["AUTOGOALS_1"]); 
 								elseif($arParams["TEAM"] == $value["TEAM_2"] && !empty($value["AUTOGOALS_2"])) echo count($value["AUTOGOALS_2"]); ?>
-							</td>
-							<td>
-								<?if($arParams["TEAM"] == $value["TEAM_1"] && !empty($value["PENALTY_1"])) echo count($value["PENALTY_1"]); 
-								elseif($arParams["TEAM"] == $value["TEAM_2"] && !empty($value["PENALTY_2"])) echo count($value["PENALTY_1_2"]); ?>
 							</td>
 						</tr>
 		  			<?}?>
@@ -182,7 +188,7 @@
 								<?=$value["MATCHES"]?>
 							</td>
 							<td>
-								<?echo ($value["GOALS"] != 0) ? $value["GOALS"] : "";?>
+								<?echo ($value["GOALS_SCORED"] != 0) ? $value["GOALS_SCORED"] : "";?>
 							</td>
 							<td>
 								<?echo ($value["YCARDS"] != 0) ? $value["YCARDS"] : "";?>

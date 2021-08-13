@@ -499,9 +499,9 @@ else
 		//заполняем NAME на странице /personal/player/change.php 
 		if(dirname($_SERVER['REQUEST_URI'])=="/personal/player"){?>
 			$("#1_SURNAME, #2_NAME, #3_PATRONYMIC").on("keyup", function() {
-			var v1 = $("#1_SURNAME").val()?$("#1_SURNAME").val()+" ":""; 
-			var v2 = $("#2_NAME").val()?$("#2_NAME").val()+" ":""; 
-			var v3 = $("#3_PATRONYMIC").val()?$("#3_PATRONYMIC").val():""; 
+			var v1 = $("#1_SURNAME").val()?$("#1_SURNAME").val().trim():""; 
+			var v2 = $("#2_NAME").val()?" "+$("#2_NAME").val().trim():""; 
+			var v3 = $("#3_PATRONYMIC").val()?" "+$("#3_PATRONYMIC").val().trim():""; 
 			$("#NAME_").val(v1+v2+v3); 
 			});
 			$(function() { setTimeout(function(){$("html, body").scrollTop(0);}, 1000);});

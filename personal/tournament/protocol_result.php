@@ -25,26 +25,31 @@ if (CSite::InGroup( array(1,7) )) {
     //Погнали
    $el = new CIBlockElement;
 
+    // техническое поражение или нет
+    $df = false;
+    if(($_POST['technicalDefeat_1']=="0" || $_POST['technicalDefeat_1']>0) && ($_POST['technicalDefeat_2']=="0" || $_POST['technicalDefeat_2']>0)) $df = true;
+
     //Свойства
     $PROP = array();
     $PROP['STAGE'] = $_POST['stage'];
     $PROP['TEAM_1'] = $_POST['team_1']; 
     $PROP['TEAM_2'] = $_POST['team_2']; 
-    $PROP['STRUCTURE_TEAM_1'] = $_POST['team_1_player']; 
-    $PROP['STRUCTURE_TEAM_2'] = $_POST['team_2_player']; 
-    $PROP['GOALS_TEAM_1'] = $_POST['team_1_goals']; 
-    $PROP['GOALS_TEAM_2'] = $_POST['team_2_goals']; 
-    $PROP['YELLOW_CARDS_TEAM_1'] = $_POST['team_1_yellow_card']; 
-    $PROP['YELLOW_CARDS_TEAM_2'] = $_POST['team_2_yellow_card']; 
-    $PROP['TWO_YELLOW_CARDS_TEAM_1'] = $_POST['team_1_two_yellow_card']; 
-    $PROP['TWO_YELLOW_CARDS_TEAM_2'] = $_POST['team_2_two_yellow_card']; 
-    $PROP['RED_CARDS_TEAM_1'] = $_POST['team_1_red_card']; 
-    $PROP['RED_CARDS_TEAM_2'] = $_POST['team_2_red_card']; 
-    $PROP['AUTO_GOALS_TEAM_1'] = $_POST['team_1_autogoals']; 
-    $PROP['AUTO_GOALS_TEAM_2'] = $_POST['team_2_autogoals']; 
-    $PROP['PENALTY_TEAM_1'] = $_POST['team_1_penalty']; 
-    $PROP['PENALTY_TEAM_2'] = $_POST['team_2_penalty']; 
-
+    $PROP['STRUCTURE_TEAM_1'] = ($df) ? array() : $_POST['team_1_player']; 
+    $PROP['STRUCTURE_TEAM_2'] = ($df) ? array() : $_POST['team_2_player']; 
+    $PROP['GOALS_TEAM_1'] = ($df) ? array() : $_POST['team_1_goals']; 
+    $PROP['GOALS_TEAM_2'] = ($df) ? array() : $_POST['team_2_goals']; 
+    $PROP['YELLOW_CARDS_TEAM_1'] = ($df) ? array() : $_POST['team_1_yellow_card']; 
+    $PROP['YELLOW_CARDS_TEAM_2'] = ($df) ? array() : $_POST['team_2_yellow_card']; 
+    $PROP['TWO_YELLOW_CARDS_TEAM_1'] = ($df) ? array() : $_POST['team_1_two_yellow_card']; 
+    $PROP['TWO_YELLOW_CARDS_TEAM_2'] = ($df) ? array() : $_POST['team_2_two_yellow_card']; 
+    $PROP['RED_CARDS_TEAM_1'] = ($df) ? array() : $_POST['team_1_red_card']; 
+    $PROP['RED_CARDS_TEAM_2'] = ($df) ? array() : $_POST['team_2_red_card']; 
+    $PROP['AUTO_GOALS_TEAM_1'] = ($df) ? array() : $_POST['team_1_autogoals']; 
+    $PROP['AUTO_GOALS_TEAM_2'] = ($df) ? array() : $_POST['team_2_autogoals']; 
+    $PROP['PENALTY_TEAM_1'] = ($df) ? array() : $_POST['team_1_penalty']; 
+    $PROP['PENALTY_TEAM_2'] = ($df) ? array() : $_POST['team_2_penalty']; 
+    $PROP['TECHNICAL_DEFEAT_TEAM_1'] = ($df) ? $_POST['technicalDefeat_1'] : "";
+    $PROP['TECHNICAL_DEFEAT_TEAM_2'] = ($df) ? $_POST['technicalDefeat_2'] : "";
     
     // echo 'Вот такие данные мы записали в PROP';
     // echo '<pre>';

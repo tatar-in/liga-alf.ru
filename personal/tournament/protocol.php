@@ -8,39 +8,57 @@ $APPLICATION->AddChainItem($APPLICATION->GetTitle() );
 CModule::IncludeModule('iblock');
 
 //Получаем базу игроков
-    $arSelect = Array("ID", "NAME",'PREVIEW_PICTURE');
+    $arSelect = Array("ID", "NAME");
     $arFilter = Array("IBLOCK_ID"=>"1");
     $res = CIBlockElement::GetList(Array("ID"=>"ASC"), $arFilter, false, false, $arSelect);
     while($ob = $res->GetNext())
     {
     	$arResult["PLAYERS"][$ob['ID']]["ID"] = $ob['ID'];
     	$arResult["PLAYERS"][$ob['ID']]["NAME"] = $ob['NAME'];
-    	$arResult["PLAYERS"][$ob['ID']]["IMG"] = CFile::GetPath($ob['PREVIEW_PICTURE']);
     }
 
-//Получаем базу команд 
-    $arSelect = Array("ID", "NAME",'PREVIEW_PICTURE');
-    $arFilter = Array("IBLOCK_ID"=>"2");
+//Получаем полную информацию по элементу
+    $arSelect = Array("ID", "IBLOCK_ID", "NAME",'ACTIVE_FROM', "PROPERTY_STAGE", 
+        "PROPERTY_TEAM_1", "PROPERTY_TEAM_2", "PROPERTY_TEAM_1.NAME", "PROPERTY_TEAM_2.NAME", 
+        "PROPERTY_STRUCTURE_TEAM_1", "PROPERTY_STRUCTURE_TEAM_2", 
+        "PROPERTY_GOALS_TEAM_1", "PROPERTY_GOALS_TEAM_2", 
+        "PROPERTY_YELLOW_CARDS_TEAM_1", "PROPERTY_YELLOW_CARDS_TEAM_2", 
+        "PROPERTY_TWO_YELLOW_CARDS_TEAM_1", "PROPERTY_TWO_YELLOW_CARDS_TEAM_2", 
+        "PROPERTY_RED_CARDS_TEAM_1", "PROPERTY_RED_CARDS_TEAM_2", 
+        "PROPERTY_AUTO_GOALS_TEAM_1", "PROPERTY_AUTO_GOALS_TEAM_2", 
+        "PROPERTY_PENALTY_TEAM_1", "PROPERTY_PENALTY_TEAM_2", 
+        "PROPERTY_TECHNICAL_DEFEAT_TEAM_1", "PROPERTY_TECHNICAL_DEFEAT_TEAM_2");
+    $arFilter = Array("IBLOCK_ID"=>"3", "ID" => $_REQUEST["CODE"]);
     $res = CIBlockElement::GetList(Array("ID"=>"ASC"), $arFilter, false, false, $arSelect);
     while($ob = $res->GetNext())
     {
-    	$arResult["TEAMS"][$ob['ID']]["ID"] = $ob['ID'];
-    	$arResult["TEAMS"][$ob['ID']]["NAME"] = $ob['NAME'];
-    	$arResult["TEAMS"][$ob['ID']]["IMG"] = CFile::GetPath($ob['PREVIEW_PICTURE']);
+        $arResult["ELEMENT"]["ID"] = $ob['ID'];
+        $arResult["ELEMENT"]["NAME"] = $ob['NAME'];
+        $arResult["ELEMENT"]["DATE"] = $ob['ACTIVE_FROM'];
+        $arResult["ELEMENT"]["STAGE"] = array('ID' => $ob['PROPERTY_STAGE_ENUM_ID'], 'NAME' => $ob['PROPERTY_STAGE_VALUE']);
+        $arResult["ELEMENT"]["TEAM_1"] = array('ID' => $ob['PROPERTY_TEAM_1_VALUE'], "NAME" => $ob['PROPERTY_TEAM_1_NAME']);
+        $arResult["ELEMENT"]["TEAM_2"] = array('ID' => $ob['PROPERTY_TEAM_2_VALUE'], "NAME" => $ob['PROPERTY_TEAM_2_NAME']);
+        $arResult["ELEMENT"]["STRUCTURE_1"] = $ob['PROPERTY_STRUCTURE_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["STRUCTURE_2"] = $ob['PROPERTY_STRUCTURE_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["GOALS_1"] = $ob['PROPERTY_GOALS_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["GOALS_2"] = $ob['PROPERTY_GOALS_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["YCARDS_1"] = $ob['PROPERTY_YELLOW_CARDS_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["YCARDS_2"] = $ob['PROPERTY_YELLOW_CARDS_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["2YCARDS_1"] = $ob['PROPERTY_TWO_YELLOW_CARDS_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["2YCARDS_2"] = $ob['PROPERTY_TWO_YELLOW_CARDS_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["RCARDS_1"] = $ob['PROPERTY_RED_CARDS_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["RCARDS_2"] = $ob['PROPERTY_RED_CARDS_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["AUTOGOALS_1"] = $ob['PROPERTY_AUTO_GOALS_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["AUTOGOALS_2"] = $ob['PROPERTY_AUTO_GOALS_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["PENALTY_1"] = $ob['PROPERTY_PENALTY_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["PENALTY_2"] = $ob['PROPERTY_PENALTY_TEAM_2_VALUE'];
+        $arResult["ELEMENT"]["TECHNICAL_DEFEAT_1"] = $ob['PROPERTY_TECHNICAL_DEFEAT_TEAM_1_VALUE'];
+        $arResult["ELEMENT"]["TECHNICAL_DEFEAT_2"] = $ob['PROPERTY_TECHNICAL_DEFEAT_TEAM_2_VALUE'];
     }
 
-//Получаем получаем полную информацию по элементу
-    $arSelect = Array("ID", "IBLOCK_ID", "NAME",'ACTIVE_FROM', "PROPERTY_*");
-    $arFilter = Array("IBLOCK_ID"=>"3", "ID" => $_REQUEST["CODE"]);
-    $res = CIBlockElement::GetList(Array("ID"=>"ASC"), $arFilter, false, false, $arSelect);
-    while($ob = $res->GetNextElement())
-    {
-    	$arResult["ELEMENT"]["FIELDS"] = $ob->GetFields();
-    	$arResult["ELEMENT"]["PROPERTIES"] = $ob->GetProperties();
-    }
 
 
-//echo '<pre>';print_r($arResult);echo '</pre>';
+// echo '<pre>';print_r($arResult);echo '</pre>';
 
 ?>
  
@@ -63,6 +81,8 @@ CModule::IncludeModule('iblock');
                 <b>2ЖК</b> - игроком получена 2 желтые карточки за матч<br>
                 <b>КК</b> - игроком получена прямая красная карточка. Не следует ставить эту галочку, если игроком сначала получена 2 желтые карточки, а потом дана красная карточка<br>
                 <b>Пенальти</b> - подразумевается серия послематчевых пенальти. Голы, забитые в серии пенальти, не учитывается в расчете бомбардиров</p> 
+                <br>
+                <p>В случае если по игре назначено техническое поражение, то следует включить соответствующий режим, потянув ползунок под заголовком матча. После этого нужно внести счет у каждой команды.</p>
             </div>
         </div>
     </div>
@@ -73,77 +93,85 @@ CModule::IncludeModule('iblock');
 
 <?if(CSite::InGroup( array(1,7) )){?>
 	<h3><?$APPLICATION->ShowTitle();?></h3> 
-<h4>
-	<?=$arResult["ELEMENT"]["FIELDS"]["NAME"];?>
-	(<?=$arResult["ELEMENT"]["PROPERTIES"]["STAGE"]["VALUE"];?>)
-</h4>
+    <h4>
+    	<?=$arResult["ELEMENT"]["NAME"];?>
+    	(<?=$arResult["ELEMENT"]["STAGE"]["NAME"];?>)
+    </h4>
     <form name="protocol" action="/personal/tournament/protocol_result.php" method="POST" enctype="multipart/form-data">
        
         <input type="hidden" name="section_id" value="<?=$_GET["SECTION_ID"];?>" />
-        <input type="hidden" name="game_id" value="<?=$arResult['ELEMENT']["FIELDS"]["ID"];?>" />
-        <input type="hidden" name="stage" value="<?=$arResult['ELEMENT']["PROPERTIES"]["STAGE"]["VALUE_ENUM_ID"];?>" />
-        <input type="hidden" name="team_1" value="<?=$arResult['ELEMENT']["PROPERTIES"]["TEAM_1"]["VALUE"];?>" />
-        <input type="hidden" name="team_2" value="<?=$arResult['ELEMENT']["PROPERTIES"]["TEAM_2"]["VALUE"];?>" />
+        <input type="hidden" name="game_id" value="<?=$arResult['ELEMENT']["ID"];?>" />
+        <input type="hidden" name="stage" value="<?=$arResult['ELEMENT']["STAGE"]["ID"];?>" />
+        <input type="hidden" name="team_1" value="<?=$arResult['ELEMENT']["TEAM_1"]["ID"];?>" />
+        <input type="hidden" name="team_2" value="<?=$arResult['ELEMENT']["TEAM_2"]["ID"];?>" />
+
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="technicalDefeat" <?if(isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_1"]) && isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_2"])) echo 'value="Y" checked'; else echo 'value="N"';?> onchange="technical_Defeat(this.value)">
+            <label class="custom-control-label" for="technicalDefeat">Техническое поражение</label>
+        </div>
 
         <?for ($j=1; $j <= 2; $j++) { ?>
             
             <div class="col-lg-12 px-0">
                 <h5 class="my-3 py-1 bg-secondary text-white text-center">
-                    <?=$arResult["TEAMS"][$arResult['ELEMENT']["PROPERTIES"]["TEAM_$j"]["VALUE"]]["NAME"];?>
+                    <?=$arResult['ELEMENT']["TEAM_$j"]["NAME"];?>
                 </h5>
             </div>
-        	<div class="table-responsive">
+
+            <div class="form-group row <?if(!isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_1"]) && !isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_2"])) echo 'd-none';?>" data-defeat="technicalDefeat">
+                <label for="technicalDefeat_<?=$j;?>" class="col-auto col-form-label">Голы</label>
+                <div class="col-auto">
+                    <input id="technicalDefeat_<?=$j;?>" class="form-control" type="number" name="technicalDefeat_<?=$j;?>" max="10" min="0" value="<?=$arResult['ELEMENT']["TECHNICAL_DEFEAT_".$j];?>" placeholder="Введи счет"> 
+                </div>
+            </div>
+
+        	<div class="table-responsive <?if(isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_1"]) && isset($arResult["ELEMENT"]["TECHNICAL_DEFEAT_2"])) echo 'd-none';?>">
         		<table class="table table-hover table-sm ">
         			<thead class="thead-light">
         				<tr>
-                            <th scope="col">
+                            <th scope="col" style="min-width:30px">
                                 #
                             </th>
-        					<th scope="col">
+        					<th scope="col" style="min-width:300px" width="50%">
                                 Состав
         					</th>
-                            <th scope="col">
+                            <th scope="col" style="min-width:100px">
                                 Голы
                             </th>
-                            <th scope="col"  data-toggle="tooltip" data-placement="bottom" title="Желтая карточка за матч">
+                            <th scope="col" style="min-width:50px" data-toggle="tooltip" data-placement="bottom" title="Желтая карточка за матч">
                                 ЖК
                             </th>
-                            <th scope="col"  data-toggle="tooltip" data-placement="bottom" title="Две желтые карточки за матч">
+                            <th scope="col" style="min-width:50px" data-toggle="tooltip" data-placement="bottom" title="Две желтые карточки за матч">
                                 2ЖК
                             </th>
-                            <th scope="col"  data-toggle="tooltip" data-placement="bottom" title="Прямая красная карточка">
+                            <th scope="col" style="min-width:50px" data-toggle="tooltip" data-placement="bottom" title="Прямая красная карточка">
                                 КК
                             </th>
-                            <th scope="col">
+                            <th scope="col" style="min-width:100px">
                                 Автоголы
                             </th>
-                            <th scope="col"  data-toggle="tooltip" data-placement="bottom" title="Серия послематчевых пенальти">
-                                Пенальти
+                            <th scope="col" style="min-width:100px" data-toggle="tooltip" data-placement="bottom" title="Серия послематчевых пенальти">
+                                Пен.
                             </th>
         				</tr>
         			</thead>
           			<tbody>
-                        <? $c = count($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"])< 10 ? 10 : count($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"]) + 1 ;
-                        for ($i=0; $i <= $c; $i++) {?> 
-                            <tr <?if($i==$c) echo 'class="d-none team_'.$j.'"';?>>
+                        <? $c = count($arResult["ELEMENT"]["STRUCTURE_$j"])< 10 ? 10 : count($arResult["ELEMENT"]["STRUCTURE_$j"]) + 1 ;
+                        for ($i=0; $i < 30; $i++) {?> 
+                            <tr <?if($i>=$c) echo 'class="d-none team_'.$j.'"';?>>
                                 <td>
                                     <?=$i+1;?>
                                 </td>
                                 <td>
-                                    <select class="form-control form-control-sm <?if($i!=$c) echo 'select2';?>"
+                                    <select class="form-control form-control-sm select2"
                                     		name="team_<?=$j;?>_player[]"
                                     		id="team_<?=$j;?>_player_<?=$i;?>"
                                     		onchange="change_select(this.id,this.value)" 
-                                    		style="width:100%;"  >
+                                    		style="width:90%;"  >
                                         <option></option>
-                                        <?foreach ($arResult["PLAYERS"] as $key => $value) 
-	                                        {?>
-	                                            <option value="<?=$key;?>" 
-	                                            		<?if($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]==$key) echo "selected";?> >
-	                                                <?=$value["NAME"];?>
-	                                            </option>';
-	                                        <?}?>
+                                        <option value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i]?>" selected="selected"><?=$arResult["PLAYERS"][$arResult["ELEMENT"]["STRUCTURE_$j"][$i]]["NAME"]?></option>
                                     </select>
+                                    <a href="javascript:" id="team_<?=$j;?>_player_<?=$i;?>_clear" onclick="clear_select(this.id)" title="Удалить" class="text-danger">x</a>
                                 </td>
                                 <td>
                                     <input class="form-control form-control-sm" 
@@ -152,20 +180,16 @@ CModule::IncludeModule('iblock');
                                     		id="team_<?=$j;?>_goals_<?=$i;?>"  
                                     		max="50" 
                                     		min="0" 
-                                    		data-value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>"
+                                    		data-value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>"
                                     		onchange="change_input(this.id)" 
-                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]))>0)
+                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["GOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]))>0)
 	                                    		{
-	                                    			echo count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]));
-	                                    		}?>"  
-                                    		<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                    		{
-	                                    			echo "disabled";
-	                                    		}?>  />
+	                                    			echo count(array_keys($arResult["ELEMENT"]["GOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]));
+	                                    		}?>" />
                                     <div class="d-none" id="team_<?=$j;?>_goals_<?=$i;?>_hidden"  >
-	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i])); $n++) 
+	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["GOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i])); $n++) 
 		                                    { ?>
-		                                        <input type="hidden" name="team_<?=$j;?>_goals[]" value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>" />
+		                                        <input type="hidden" name="team_<?=$j;?>_goals[]" value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>" />
 		                                    <?}?>
 	                                </div>
 
@@ -176,14 +200,10 @@ CModule::IncludeModule('iblock');
                                         		type="checkbox" 
                                         		name="team_<?=$j;?>_yellow_card[]" 
                                         		id="team_<?=$j;?>_yellow_card_<?=$i;?>" 
-                                        		value ="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>" 
-                                        		<?if(in_array($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i], $arResult["ELEMENT"]["PROPERTIES"]["YELLOW_CARDS_TEAM_$j"]["VALUE"])) 
+                                        		value ="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>" 
+                                        		<?if(in_array($arResult["ELEMENT"]["STRUCTURE_$j"][$i], $arResult["ELEMENT"]["YCARDS_$j"])) 
 	                                        		{
 	                                        			echo 'checked' ;
-	                                        		}?>  
-                                        		<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                        		{
-	                                        			echo "disabled";
 	                                        		}?> />
                                         <label class="custom-control-label" for="team_<?=$j;?>_yellow_card_<?=$i;?>">
                                             
@@ -196,15 +216,11 @@ CModule::IncludeModule('iblock');
                                         		type="checkbox" 
                                         		name="team_<?=$j;?>_two_yellow_card[]" 
                                         		id="team_<?=$j;?>_two_yellow_card_<?=$i;?>" 
-												value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>"
-                                        		<?if(in_array($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i], $arResult["ELEMENT"]["PROPERTIES"]["TWO_YELLOW_CARDS_TEAM_$j"]["VALUE"])) 
+												value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>"
+                                        		<?if(in_array($arResult["ELEMENT"]["STRUCTURE_$j"][$i], $arResult["ELEMENT"]["2YCARDS_$j"]))
 	                                        		{
 	                                        			echo 'checked' ;
-	                                        		}?>  
-                                        		<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                        		{
-	                                        			echo "disabled";
-	                                        		}?> />
+	                                        		}?>  />
                                         <label class="custom-control-label" for="team_<?=$j;?>_two_yellow_card_<?=$i;?>">
                                              
                                         </label>
@@ -216,15 +232,11 @@ CModule::IncludeModule('iblock');
                                         		type="checkbox" 
                                         		name="team_<?=$j;?>_red_card[]" 
                                         		id="team_<?=$j;?>_red_card_<?=$i;?>" 
-                                        		value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>"
-                                        		<?if(in_array($arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i], $arResult["ELEMENT"]["PROPERTIES"]["RED_CARDS_TEAM_$j"]["VALUE"])) 
+                                        		value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>"
+                                        		<?if(in_array($arResult["ELEMENT"]["STRUCTURE_$j"][$i], $arResult["ELEMENT"]["RCARDS_$j"])) 
 		                                			{
 		                                    			echo 'checked' ;
-		                                			}?> 
-                                    			<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                    			{
-	                                    				echo "disabled";
-	                                    			}?> />
+		                                			}?>  />
                                         <label class="custom-control-label" for="team_<?=$j;?>_red_card_<?=$i;?>">
                                                            
                                         </label>
@@ -237,20 +249,16 @@ CModule::IncludeModule('iblock');
                                     		id="team_<?=$j;?>_autogoals_<?=$i;?>"  
                                     		max="50" 
                                     		min="0" 
-                                    		data-value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>"
+                                    		data-value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>"
                                     		onchange="change_input(this.id)" 
-                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["AUTO_GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]))>0)
+                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["AUTOGOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]))>0)
 	                                    		{
-	                                    			echo count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["AUTO_GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]));
-	                                    		}?>"  
-                                    		<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                    		{
-	                                    			echo "disabled";
-	                                    		}?>  />
+	                                    			echo count(array_keys($arResult["ELEMENT"]["AUTOGOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]));
+	                                    		}?>" />
                                     <div class="d-none" id="team_<?=$j;?>_autogoals_<?=$i;?>_hidden"  >
-	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["AUTO_GOALS_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i])); $n++) 
+	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["AUTOGOALS_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i])); $n++) 
 		                                    { ?>
-		                                        <input type="hidden" name="team_<?=$j;?>_autogoals[]" value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>" />
+		                                        <input type="hidden" name="team_<?=$j;?>_autogoals[]" value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>" />
 		                                    <?}?>
 	                                </div>
 
@@ -262,20 +270,16 @@ CModule::IncludeModule('iblock');
                                     		id="team_<?=$j;?>_penalty_<?=$i;?>"  
                                     		max="50" 
                                     		min="0" 
-                                    		data-value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>"
+                                    		data-value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>"
                                     		onchange="change_input(this.id)" 
-                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["PENALTY_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]))>0)
+                                    		value="<?if(count(array_keys($arResult["ELEMENT"]["PENALTY_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]))>0)
 	                                    		{
-	                                    			echo count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["PENALTY_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]));
-	                                    		}?>"  
-                                    		<?if(!$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i]) 
-	                                    		{
-	                                    			echo "disabled";
-	                                    		}?>  />
+	                                    			echo count(array_keys($arResult["ELEMENT"]["PENALTY_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i]));
+	                                    		}?>" />
                                     <div class="d-none" id="team_<?=$j;?>_penalty_<?=$i;?>_hidden"  >
-	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["PROPERTIES"]["PENALTY_TEAM_$j"]["VALUE"], $arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i])); $n++) 
+	                                    <?for ($n=0; $n < count(array_keys($arResult["ELEMENT"]["PENALTY_$j"], $arResult["ELEMENT"]["STRUCTURE_$j"][$i])); $n++) 
 		                                    { ?>
-		                                        <input type="hidden" name="team_<?=$j;?>_penalty[]" value="<?=$arResult["ELEMENT"]["PROPERTIES"]["STRUCTURE_TEAM_$j"]["VALUE"][$i];?>" />
+		                                        <input type="hidden" name="team_<?=$j;?>_penalty[]" value="<?=$arResult["ELEMENT"]["STRUCTURE_$j"][$i];?>" />
 		                                    <?}?>
 	                                </div>
 
@@ -304,31 +308,24 @@ CModule::IncludeModule('iblock');
         function change_select(id, value){
         	// меняем в id слова и ищем этот id в коде, проставляем у него data-value
             $("#"+id.replace("player",'goals')).attr('data-value', value);
-            // убираем абритут не активности элемента (т.к. выбран игрок)
-            $("#"+id.replace("player",'goals')).removeAttr("disabled");
             // проставляем в input элемента value (значение)
             $("#"+id.replace("player",'goals')).attr("value", "");
             // удаляем скрытые input c голами для передачи post (на случай если игрок был изменен)
             $("#"+id.replace("player",'goals')+"_hidden").empty();
 
             $("#"+id.replace("player",'autogoals')).attr('data-value', value);
-            $("#"+id.replace("player",'autogoals')).removeAttr("disabled");
             $("#"+id.replace("player",'autogoals')).attr("value", "");
             $("#"+id.replace("player",'autogoals')+"_hidden").empty();
 
             $("#"+id.replace("player",'penalty')).attr('data-value', value);
-            $("#"+id.replace("player",'penalty')).removeAttr("disabled");
             $("#"+id.replace("player",'penalty')).attr("value", "");
             $("#"+id.replace("player",'penalty')+"_hidden").empty();
             
             $("#"+id.replace("player",'yellow_card')).val(value);
-            $("#"+id.replace("player",'yellow_card')).removeAttr("disabled");
             
             $("#"+id.replace("player",'two_yellow_card')).val(value);
-            $("#"+id.replace("player",'two_yellow_card')).removeAttr("disabled");
             
             $("#"+id.replace("player",'red_card')).val(value);
-            $("#"+id.replace("player",'red_card')).removeAttr("disabled");
         }
 
         //при вводе голов добавляем скрытые input с голами для передачи post
@@ -344,83 +341,120 @@ CModule::IncludeModule('iblock');
         	}
         }
 
-
-        //добавляем строки в таблицу
+        //открываем скрытую строку в таблице
         function add_more(team){
-            
-            //вставляем копию скрытой строки
-            $('.'+team).clone().show().removeAttr("class").insertBefore('.'+team);
-            
-            //меняем атрибуты у скрытой строки
-            var num = Number.parseInt($('.'+team).find("td:first").text());
-            
-            $('.'+team).find("td:first").text((num+1).toString());
-            
-            $('.'+team).find("select").attr('id',team+"_player_"+num).trigger("change");
-
-            $('.'+team).find("#"+team+"_goals_"+(num-1)).attr('id',team+"_goals_"+num);
-            $('.'+team).find("#"+team+"_goals_"+(num-1)+"_hidden").attr('id',team+"_goals_"+num+"_hidden");
-
-            $('.'+team).find("#"+team+"_yellow_card_"+(num-1)).attr('id',team+"_yellow_card_"+num);
-            $('.'+team).find("label[for="+team+"_yellow_card_"+(num-1)+"]").attr('for',team+"_yellow_card_"+num);
-            
-            $('.'+team).find("#"+team+"_two_yellow_card_"+(num-1)).attr('id',team+"_two_yellow_card_"+num);
-            $('.'+team).find("label[for="+team+"_two_yellow_card_"+(num-1)+"]").attr('for',team+"_two_yellow_card_"+num);
-            
-            $('.'+team).find("#"+team+"_red_card_"+(num-1)).attr('id',team+"_red_card_"+num);
-            $('.'+team).find("label[for="+team+"_red_card_"+(num-1)+"]").attr('for',team+"_red_card_"+num);
-
-            $('.'+team).find("#"+team+"_autogoals_"+(num-1)).attr('id',team+"_autogoals_"+num);
-            $('.'+team).find("#"+team+"_autogoals_"+(num-1)+"_hidden").attr('id',team+"_autogoals_"+num+"_hidden");
-
-            $('.'+team).find("#"+team+"_penalty_"+(num-1)).attr('id',team+"_penalty_"+num);
-            $('.'+team).find("#"+team+"_penalty_"+(num-1)+"_hidden").attr('id',team+"_penalty_"+num+"_hidden");
-			
-			//Добавляем класс и иницируем select2
-            $("#"+team+"_player_"+(num-1)).addClass("select2").select2(
-            {
-                placeholder: "Начни вводить",
-                minimumInputLength: 1,
-                //allowClear: true,
-                language: {
-                    "searching": function(){
-                        return "Поиск...";
-                    },
-                    "noResults": function(){
-                        return "Нет результатов удовлетворяющих критериям поиска";
-                    },
-                    "inputTooShort": function(){
-                        return "Для поиска введите 1 или более символов";
-                    },
-                },
-            });
+            $('tr.'+team).first().removeAttr("class");
         }   
 
+        // обнуляем выбор игрока
+        function clear_select(id){
+            var text = id.replace("_clear", "");
+            $('#'+text).val(null).trigger("change");
+            $("#"+text.replace("player",'yellow_card')).removeAttr("checked");
+            $("#"+text.replace("player",'two_yellow_card')).removeAttr("checked");
+            $("#"+text.replace("player",'red_card')).removeAttr("checked");
+        }
 
-        $(document).ready(function(){
-            $(".select2").select2({
-                placeholder: "Начни вводить",
-                minimumInputLength: 1,
-                //allowClear: true,
-                language: {
+        // настраиваем select2 для выбора игроков
+        $(".select2").select2({
+            ajax: {
+                url: "https://liga-alf.ru/api/?action=getplayers",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    if(!isNaN(params.term)){
+                        var query = {
+                            id: params.term,
+                            page: params.page
+                        }    
+                    }
+                    else{
+                        var query = {
+                            name: params.term,
+                            page: params.page
+                        }
+                    }
+                    return query;
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data.result,
+                        pagination: {
+                            more: (params.page * 20) < data.count
+                        }
+                    };
+                },
+                cache: true
+            },
+            language: {
                     "searching": function(){
                         return "Поиск...";
                     },
                     "noResults": function(){
-                        return "Нет результатов удовлетворяющих критериям поиска";
+                        return "Нет результатов, удовлетворяющих критериям поиска";
                     },
                     "inputTooShort": function(){
-                        return "Для поиска введите 1 или более символов";
+                        return "Для поиска введи 1 или более символов";
+                    },
+                    loadingMore: function (){
+                        return 'Загружаю ещё...';
                     },
                 },
-            });
+            escapeMarkup: function(markup){return markup;}, // пользовательское форматирование
+            minimumInputLength: 1,
+            templateResult: formatResult,
+            templateSelection: formatSelectedResult
         });
 
+        // форматирование найденных элементов в выпадающем списке select2
+        function formatResult (result) {
+            if (result.loading) {
+                return result.name;
+            }
+
+            var $container = $(
+                "<div class='container'>" +
+                    "<div class='row'>" +
+                        "<div class='col'>" +
+                            "<img src='" + result.picture.medium + "' class='rounded float-left mr-3' />" +
+                            result.name +  
+                        "</div" +
+                    "</div>" +
+                "</div>"
+            );
+
+            if($container.find("img").attr("src") != "undefined") $container.find("img").attr("width", "100px");
+
+          return $container;
+        }
+
+        // форматирование выбранного результата select2
+        function formatSelectedResult (result) {
+            if (result.id === '') return '<span class="text-black-50">Начни вводить</span>';
+            else if(result.selected) return result.text;
+            else return result.name || result.id;
+        }
 
         // активация всплывающих подсказок
         $(function () {
-          $('[data-toggle="tooltip"]').tooltip()
-        })
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
+        // включает поля технического поражения, отключает другие поля и наоборот
+        function technical_Defeat(value){
+            if(value=="N"){
+                $("input#technicalDefeat").attr("value", "Y").attr("checked", "");
+                $("div.table-responsive").addClass("d-none");
+                $("div[data-defeat=technicalDefeat]").removeClass("d-none");
+            }
+            else if(value=="Y"){
+                $("input#technicalDefeat").attr("value", "N").removeAttr("checked");
+                $("div.table-responsive").removeClass("d-none");
+                $("div[data-defeat=technicalDefeat]").addClass("d-none");
+            }
+        }
     </script>
 
 <?}?>

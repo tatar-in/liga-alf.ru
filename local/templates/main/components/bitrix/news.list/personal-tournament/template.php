@@ -114,6 +114,10 @@ $this->setFrameMode(true);
 								echo ")</small>";
 							}
 						}
+						elseif (($arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]=="0" || $arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"]>0) && ($arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]=="0" || $arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]>0))
+						{
+							echo $arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_1"]["VALUE"].":".$arItem["PROPERTIES"]["TECHNICAL_DEFEAT_TEAM_2"]["VALUE"]." <small>(т.п.)</small>";
+						}
 						else
 						{
 							echo "-:-";

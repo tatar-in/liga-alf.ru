@@ -21,8 +21,8 @@ else
 	$arOrder = array("DATE_ACTIVE_FROM" => "DESC", 'ID' => 'DESC');
 	$arFilter = array('IBLOCK_ID' => $arParams["IBLOCK_ID"], "SECTION_GLOBAL_ACTIVE" => "Y", "SECTION_ACTIVE" => "Y", "ACTIVE" => "Y", "SECTION_ID" => $arParams["SECTION_ID"], "INCLUDE_SUBSECTIONS" => "Y", array("LOGIC" => "OR", "PROPERTY_TEAM_1" => $arParams["TEAM"], "PROPERTY_TEAM_2" => $arParams["TEAM"])); 
 	$arSelect = array("ID", "IBLOCK_ID", "NAME", "DETAIL_PAGE_URL", "PROPERTY_STAGE", "DATE_ACTIVE_FROM",
-		"PROPERTY_TEAM_1", "PROPERTY_TEAM_1.NAME", "PROPERTY_TEAM_1.DETAIL_PAGE_URL", "PROPERTY_TEAM_1.PREVIEW_PICTURE", "PROPERTY_GOALS_TEAM_1", "PROPERTY_AUTO_GOALS_TEAM_1", "PROPERTY_STRUCTURE_TEAM_1", "PROPERTY_YELLOW_CARDS_TEAM_1", "PROPERTY_TWO_YELLOW_CARDS_TEAM_1", "PROPERTY_RED_CARDS_TEAM_1", "PROPERTY_PENALTY_TEAM_1", 
-		"PROPERTY_TEAM_2", "PROPERTY_TEAM_2.NAME", "PROPERTY_TEAM_2.DETAIL_PAGE_URL", "PROPERTY_TEAM_2.PREVIEW_PICTURE", "PROPERTY_GOALS_TEAM_2", "PROPERTY_AUTO_GOALS_TEAM_2", "PROPERTY_STRUCTURE_TEAM_2", "PROPERTY_YELLOW_CARDS_TEAM_2", "PROPERTY_TWO_YELLOW_CARDS_TEAM_2", "PROPERTY_RED_CARDS_TEAM_2", "PROPERTY_PENALTY_TEAM_2");
+		"PROPERTY_TEAM_1", "PROPERTY_TEAM_1.NAME", "PROPERTY_TEAM_1.DETAIL_PAGE_URL", "PROPERTY_TEAM_1.PREVIEW_PICTURE", "PROPERTY_GOALS_TEAM_1", "PROPERTY_AUTO_GOALS_TEAM_1", "PROPERTY_STRUCTURE_TEAM_1", "PROPERTY_YELLOW_CARDS_TEAM_1", "PROPERTY_TWO_YELLOW_CARDS_TEAM_1", "PROPERTY_RED_CARDS_TEAM_1", "PROPERTY_PENALTY_TEAM_1", "PROPERTY_TECHNICAL_DEFEAT_TEAM_1",
+		"PROPERTY_TEAM_2", "PROPERTY_TEAM_2.NAME", "PROPERTY_TEAM_2.DETAIL_PAGE_URL", "PROPERTY_TEAM_2.PREVIEW_PICTURE", "PROPERTY_GOALS_TEAM_2", "PROPERTY_AUTO_GOALS_TEAM_2", "PROPERTY_STRUCTURE_TEAM_2", "PROPERTY_YELLOW_CARDS_TEAM_2", "PROPERTY_TWO_YELLOW_CARDS_TEAM_2", "PROPERTY_RED_CARDS_TEAM_2", "PROPERTY_PENALTY_TEAM_2", "PROPERTY_TECHNICAL_DEFEAT_TEAM_2");
 	$rsEl = CIBlockElement::GetList($arOrder, $arFilter, false, false, $arSelect);
 	while ($arEl = $rsEl->GetNext())
 	{
@@ -47,6 +47,9 @@ else
 		$arResult["MATCHES"][$arEl["ID"]]["RCARDS_2"] = $arEl["PROPERTY_RED_CARDS_TEAM_2_VALUE"];
 		$arResult["MATCHES"][$arEl["ID"]]["PENALTY_1"] = $arEl["PROPERTY_PENALTY_TEAM_1_VALUE"];
 		$arResult["MATCHES"][$arEl["ID"]]["PENALTY_2"] = $arEl["PROPERTY_PENALTY_TEAM_2_VALUE"];
+		$arResult["MATCHES"][$arEl["ID"]]["TECHNICAL_DEFEAT_1"] = $arEl["PROPERTY_TECHNICAL_DEFEAT_TEAM_1_VALUE"];
+		$arResult["MATCHES"][$arEl["ID"]]["TECHNICAL_DEFEAT_2"] = $arEl["PROPERTY_TECHNICAL_DEFEAT_TEAM_2_VALUE"];
+
 		
 		// принадлежность матча к турниру
 		$rsSection = CIBlockElement::GetElementGroups($arEl["ID"], true);
@@ -135,12 +138,12 @@ else
 				$arResult["SECTIONS"][$v]["YCARDS"] += count($value["YCARDS_".$number_team]); 
 				$arResult["SECTIONS"][$v]["2YCARDS"] += count($value["2YCARDS_".$number_team]); 
 				$arResult["SECTIONS"][$v]["RCARDS"] += count($value["RCARDS_".$number_team]); 
-				$arResult["SECTIONS"][$v]["PENALTY"] += count($value["PENALTYm_".$number_team]); 
-				if (count($value["GOALS_".$number_team]) > count($value["GOALS_".(3 - $number_team)])){
+				$arResult["SECTIONS"][$v]["PENALTY"] += count($value["PENALTY_".$number_team]); 
+				if (count($value["GOALS_".$number_team]) + count($value["AUTOGOALS_".(3 - $number_team)]) + count($value["PENALTY_".$number_team]) > count($value["GOALS_".(3 - $number_team)]) + count($value["AUTOGOALS_".$number_team]) + count($value["GOALS_".(3 - $number_team)])){
 					$arResult["SECTIONS"][$v]["WIN"] += 1;
 					$arResult["SECTIONS"][$v]["SCORE"] += 3;
 				}
-				elseif (count($value["GOALS_".$number_team]) == count($value["GOALS_".(3 - $number_team)])){
+				elseif (count($value["GOALS_".$number_team]) + count($value["AUTOGOALS_".(3 - $number_team)]) + count($value["PENALTY_".$number_team]) == count($value["GOALS_".(3 - $number_team)]) + count($value["AUTOGOALS_".$number_team]) + count($value["GOALS_".(3 - $number_team)])){
 					$arResult["SECTIONS"][$v]["DEADHEAT"] += 1;
 					$arResult["SECTIONS"][$v]["SCORE"] += 1;
 				}

@@ -42,10 +42,10 @@
 					foreach($arResult["SECTION"][$key]["TEAMS"] as $value):?>
 						<?$file = CFile::ResizeImageGet($arResult["TEAMS"][$value["ID"]]["PICTURE"], array('width'=>30, 'height'=>30), BX_RESIZE_IMAGE_EXACT, true);?>
 						<tr>
-							<td class="text-muted">
+							<td class="text-muted align-middle">
 								<?=++$n;?>
 							</td>
-							<td class="text-nowrap text-truncate">
+							<td class="text-nowrap text-truncate align-middle">
 								<a href="<?echo substr($arResult["TEAMS"][$value["ID"]]["URL"],1)."?TOURNAMENT=".$arParams["SECTION_ID"];?>" class="text-reset">
 									<img class="rounded float-left mr-2" src="<?=$file["src"]?>" />
 									<?echo $arResult["TEAMS"][$value["ID"]]["NAME"]?>
@@ -55,39 +55,39 @@
 								<td class="text-center d-none" data-matches-<?=$key?>="column-hidden" <?if($v["ID"]==$value["ID"]) echo 'style="background-color:#ececec;" ';?> >
 									<?foreach ($arResult["MATCHES"] as $v1){
 										if ((($v1["TEAM_1"]==$value["ID"] && $v1["TEAM_2"]==$v["ID"]) || ($v1["TEAM_2"]==$value["ID"] && $v1["TEAM_1"]==$v["ID"])) && !isset($v1["GOALS_1"]) && !isset($v1["GOALS_2"])  && in_array($key, $v1["SECTION"])) {?>	<?// добавил in_array($key, $v1["SECTION"]) для исправления бага, который отображал в таблицах результаты матчей из других категорий турнира?>
-											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset">
+											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset d-block">
 												<?echo " -:- ";?>
 											</a>
 										<?}
 										elseif ($v1["TEAM_1"]==$value["ID"] && $v1["TEAM_2"]==$v["ID"] && in_array($key, $v1["SECTION"])) {?>	<?// добавил in_array($key, $v1["SECTION"]) для исправления бага, который отображал в таблицах результаты матчей из других категорий турнира?>
-											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset">
+											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset d-block">
 												<?echo " ".$v1["GOALS_1"].":".$v1["GOALS_2"]." ";?>
 											</a>
 										<?}
 										elseif ($v1["TEAM_2"]==$value["ID"] && $v1["TEAM_1"]==$v["ID"] && in_array($key, $v1["SECTION"])) {?>	<?// добавил in_array($key, $v1["SECTION"]) для исправления бага, который отображал в таблицах результаты матчей из других категорий турнира?>
-											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset">
+											<a href="/tournament/calendar<?=$v1["URL"]?>&TOURNAMENT=<?=$arParams["SECTION_ID"]?>" class="text-reset d-block">
 												<?echo " ".$v1["GOALS_2"].":".$v1["GOALS_1"]." ";?>
 											</a>
 										<?}
 									}?>
 								</td>
 							<?endforeach;?>
-							<td class="font-weight-bolder">
+							<td class="font-weight-bolder align-middle">
 								<?=$value["GAMES"]?>
 							</td>
-							<td>
+							<td class="align-middle">
 								<?=$value["WINS"]?>
 							</td>
-							<td>
+							<td class="align-middle">
 								<?=$value["DRAWS"]?>
 							</td>
-							<td>
+							<td class="align-middle">
 								<?=$value["LOSSES"]?>
 							</td>
-							<td class="text-nowrap">
+							<td class="text-nowrap align-middle">
 								<?=$value["GOALS_SCORED"]."-".$value["GOALS_LOSED"]?>
 							</td>
-							<td class="font-weight-bolder">
+							<td class="font-weight-bolder align-middle">
 								<?=$value["SCORES"]?>
 							</td>
 						</tr>
